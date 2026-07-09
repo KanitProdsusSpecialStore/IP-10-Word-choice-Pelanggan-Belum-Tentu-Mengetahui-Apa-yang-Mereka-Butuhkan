@@ -2,752 +2,906 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE ICEBERG INVESTIGATOR: Bedah Empati</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Iceberg Insight: Empathy Mapper</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tone.js for Audio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        ice: {
-                            bg: '#0b132b',
-                            panel: '#1c2541',
-                            blue: '#48cae4',
-                            deep: '#03045e',
-                            pink: '#f72585',
-                            yellow: '#ffb703',
-                            white: '#f8f9fa',
-                            gray: '#3a506b'
-                        }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
                     },
-                    boxShadow: {
-                        // Custom Neumorphic Shadows for Icy Theme
-                        neuOut: '8px 8px 16px #050a18, -8px -8px 16px #1b2644',
-                        neuIn: 'inset 4px 4px 8px #050a18, inset -4px -4px 8px #1b2644',
-                        neonBlue: '0 0 15px rgba(72, 202, 228, 0.5)',
-                        neonPink: '0 0 15px rgba(247, 37, 133, 0.5)',
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                        glassBorder: 'rgba(255, 255, 255, 0.1)',
+                        neonCyan: '#00f2fe',
+                        neonPurple: '#4facfe',
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Hide default scrollbar but allow functional scrolling */
-        ::-webkit-scrollbar {
-            width: 6px;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        ::-webkit-scrollbar-track {
-            background: #0b132b;
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #3a506b;
-            border-radius: 10px;
+
+        .glass-btn {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #48cae4;
+        
+        .glass-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,242,254,0.2);
         }
-        /* Icy polar grid texture */
-        .arctic-pattern {
-            background-image: radial-gradient(rgba(72, 202, 228, 0.1) 1px, transparent 1px);
-            background-size: 24px 24px;
+
+        .glass-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-        /* Custom animation for pulsating ice crystals */
+
+        .option-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .option-card.selected {
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            transform: scale(0.98);
+            background: rgba(0, 242, 254, 0.1);
+        }
+
+        .quadrant-slot {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quadrant-slot.highlight {
+            border-color: #4facfe;
+            background: rgba(79, 172, 254, 0.1);
+            box-shadow: inset 0 0 10px rgba(79, 172, 254, 0.3);
+        }
+
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
         @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(3deg); }
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
-        .float-animation {
-            animation: float 4s ease-in-out infinite;
-        }
+
+        /* Custom Scrollbar for mobile */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
-<body class="bg-ice-bg text-ice-white font-sans min-h-screen flex flex-col justify-between arctic-pattern overflow-y-auto">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
 
-    <!-- HEADER / CONTROL NAVIGATION -->
-    <header class="border-b border-ice-blue/20 bg-ice-panel/85 backdrop-blur px-4 py-3 sticky top-0 z-50 shadow-md">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <span class="w-3 h-3 bg-ice-blue rounded-full animate-ping"></span>
-                <h1 class="text-sm md:text-md font-black tracking-widest text-ice-blue uppercase">
-                    ICEBERG <span class="text-ice-pink">INVESTIGATOR</span> <span class="text-xs text-ice-yellow">v2.6</span>
+    <!-- Background Decor -->
+    <div class="fixed top-[-10%] left-[-10%] w-96 h-96 bg-neonCyan rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none animate-float"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-96 h-96 bg-neonPurple rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none animate-float" style="animation-delay: 2s;"></div>
+
+    <!-- App Container -->
+    <div id="app-container" class="relative w-full max-w-4xl h-[90vh] md:h-[85vh] glass-panel rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+        
+        <!-- === SCREEN 1: LOGIN === -->
+        <div id="screen-login" class="flex-1 flex flex-col items-center justify-center p-8 text-center animate-fade-in relative">
+            <div class="mb-8">
+                <i class="fa-solid fa-satellite-dish text-5xl text-neonCyan mb-4 animate-float"></i>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neonCyan to-neonPurple">
+                    The Iceberg Insight
                 </h1>
+                <p class="text-slate-300 mt-2 text-lg">Empathy Mapper Simulator</p>
             </div>
-            <!-- BGM Mute/Unmute Controller -->
-            <button id="btn-audio" onclick="toggleAudio()" class="px-3 py-1.5 bg-ice-panel border border-ice-blue/30 text-xs font-bold rounded-lg shadow-neuOut hover:shadow-neonBlue transition-all flex items-center gap-1.5 text-ice-blue">
-                <span id="audio-icon">🔇</span> BGM: MATI
-            </button>
+            
+            <div class="w-full max-w-sm space-y-4">
+                <div class="text-left">
+                    <label class="block text-sm text-slate-400 mb-1 ml-1"><i class="fa-solid fa-user text-xs mr-2"></i>Nama Lengkap</label>
+                    <input type="text" id="input-name" class="w-full bg-slate-800/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neonCyan focus:ring-1 focus:ring-neonCyan transition-all" placeholder="Masukkan Nama">
+                </div>
+                <div class="text-left">
+                    <label class="block text-sm text-slate-400 mb-1 ml-1"><i class="fa-solid fa-id-badge text-xs mr-2"></i>Nomor Induk Karyawan (NIK)</label>
+                    <input type="text" id="input-nik" class="w-full bg-slate-800/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neonCyan focus:ring-1 focus:ring-neonCyan transition-all" placeholder="Masukkan NIK">
+                </div>
+                <button id="btn-login" class="w-full glass-btn text-white font-bold py-3 px-6 rounded-xl mt-4 flex items-center justify-center gap-2">
+                    Akses Sistem <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="absolute bottom-6 text-xs text-slate-500 font-mono tracking-widest">
+                EDUCATION & TRAINING DEPT. &copy; 2026
+            </div>
         </div>
-    </header>
 
-    <!-- MAIN GAMEPLAY FRAME -->
-    <main class="flex-grow flex items-center justify-center p-4">
-
-        <!-- STEP 1: GATEWAY BRIEFING & PLAYER LOGINS -->
-        <section id="screen-gateway" class="w-full max-w-xl bg-ice-panel rounded-2xl p-6 md:p-8 shadow-neuOut border border-ice-blue/10">
-            <div class="text-center mb-6">
-                <div class="inline-block p-4 bg-ice-blue/10 border border-ice-blue rounded-full mb-3 shadow-neuIn float-animation text-4xl">
-                    ❄️
-                </div>
-                <h2 class="text-2xl md:text-3xl font-black text-ice-blue uppercase tracking-wider">Iceberg Investigator</h2>
-                <p class="text-xs text-ice-blue/80 mt-1">Modul Pembelajaran Mandiri: Empathy Mapping & Observasi Empiris</p>
+        <!-- === SCREEN 2: BRIEFING === -->
+        <div id="screen-briefing" class="hidden flex-1 flex-col p-6 md:p-10 animate-fade-in overflow-y-auto">
+            <div class="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+                <h2 class="text-2xl font-bold text-neonCyan"><i class="fa-solid fa-folder-open mr-2"></i>Mission Briefing</h2>
+                <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/30">TOP SECRET</span>
             </div>
 
-            <!-- THE HOOK (WHY GEN Z ENGAGEMENT) -->
-            <div class="bg-ice-pink/10 border-l-4 border-ice-pink p-4 rounded-xl mb-6 text-xs md:text-sm">
-                <p class="font-bold text-ice-pink mb-1">🔥 JANGAN TERTIPU TOPENG UCAPAN:</p>
-                <p class="text-gray-300 leading-relaxed">
-                    Banyak Manajer amatir membuang ratusan juta anggaran kantor demi membuat solusi kuesioner formal yang fana. Mereka hanya mendengar permukaan air, tanpa melihat bahwa tim mereka kelelahan secara fisik dan batin di dasar samudera. Jadilah <strong>Investigator Berlisensi</strong>: pisahkan ucapan dari kenyataan!
-                </p>
-            </div>
-
-            <!-- Login Gateway Form -->
-            <form id="form-gateway" onsubmit="processGateway(event)" class="space-y-4">
-                <div>
-                    <label class="block text-[10px] uppercase tracking-widest text-ice-blue font-bold mb-1">Nama Investigator</label>
-                    <input type="text" id="input-nama" required class="w-full bg-ice-bg border border-ice-blue/30 px-3 py-2.5 rounded-lg focus:outline-none focus:border-ice-blue text-white text-sm shadow-neuIn" placeholder="Masukkan nama lengkap Anda">
+            <div class="space-y-6 text-slate-300 leading-relaxed">
+                <div class="bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <p class="font-bold text-white mb-1"><i class="fa-solid fa-circle-question text-blue-400 mr-2"></i>THE HOOK (WHY ARE WE HERE?)</p>
+                    <p class="text-sm">Manajemen terjebak! Mereka terus mengeluarkan anggaran untuk membangun solusi berdasarkan "Apa yang pelanggan katakan", namun komplain terus meningkat. Mereka hanya melihat <strong>Puncak Gunung Es</strong>.</p>
                 </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-widest text-ice-blue font-bold mb-1">Nomor Induk Karyawan (NIK)</label>
-                    <input type="text" id="input-nik" required class="w-full bg-ice-bg border border-ice-blue/30 px-3 py-2.5 rounded-lg focus:outline-none focus:border-ice-blue text-white text-sm shadow-neuIn" placeholder="Contoh: NIK202688">
-                </div>
-                <button type="submit" class="w-full bg-ice-pink hover:bg-pink-600 text-white font-black py-3 rounded-lg uppercase text-sm tracking-wider transition-all shadow-neonPink transform hover:scale-[1.01] active:scale-95">
-                    Aktifkan Kunci Enkripsi Misi 🔓
-                </button>
-            </form>
-        </section>
 
-        <!-- STEP 2: MISSION OBJECTIVE & TUTORIAL -->
-        <section id="screen-briefing" class="hidden w-full max-w-2xl bg-ice-panel rounded-2xl p-6 md:p-8 shadow-neuOut border border-ice-blue/10">
-            <h2 class="text-lg md:text-xl font-black text-ice-yellow uppercase tracking-wider border-b border-ice-blue/20 pb-3 mb-4 flex items-center gap-2">
-                📂 PROTOKOL DETEKTIF: PETA GUNUNG ES
-            </h2>
-            
-            <div class="space-y-4 text-xs md:text-sm text-gray-300 leading-relaxed">
-                <p>Salam kenal, Rekan Investigator <span id="player-display-name" class="text-ice-blue font-bold"></span>!</p>
-                <p>
-                    Kondisi produktivitas kru di gerai toko **NEON-MART** sedang tidak stabil. Anda dibekali dengan **10 kartu temuan lapangan**. Misi utama Anda adalah mengelompokkannya (Categorize) ke dalam direktori yang tepat:
-                </p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-                    <div class="bg-ice-bg p-3.5 rounded-xl border border-ice-blue/30 shadow-neuIn">
-                        <h4 class="font-bold text-ice-blue flex items-center gap-1 text-xs">🗂️ FOLDER A: TIRAI PERMUKAAN</h4>
-                        <p class="text-[11px] text-gray-400 mt-1"><strong>"Saying / Hearing"</strong>. Berisi klaim lisan normatif, jawaban kuesioner tertulis, atau kata-kata cari aman di dalam rapat.</p>
-                    </div>
-                    <div class="bg-ice-bg p-3.5 rounded-xl border border-ice-pink/30 shadow-neuIn">
-                        <h4 class="font-bold text-ice-pink flex items-center gap-1 text-xs">👁️ FOLDER B: GUNUNG ES RIIL</h4>
-                        <p class="text-[11px] text-gray-400 mt-1"><strong>"Does / Feels"</strong>. Hasil observasi fisik di lapangan, gestur tubuh tersembunyi, rintangan praktis, atau keresahan emosi sesungguhnya.</p>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Tugas Anda, Konsultan <span id="display-name-brief" class="text-neonPurple"></span>:</h3>
+                    <p class="text-sm mb-4">Sebagai Innovation Consultant, Anda harus menyelidiki data lapangan. Jangan percaya begitu saja pada ucapan pelanggan. Petakan observasi ke dalam 4 Kuadran Empathy Map:</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="glass-panel p-3 rounded-lg border-t-2 border-t-blue-400">
+                            <strong><i class="fa-regular fa-comment-dots text-blue-400 mr-1"></i>SAYS:</strong> Apa yang mereka ucapkan langsung (Seringkali mengecoh).
+                        </div>
+                        <div class="glass-panel p-3 rounded-lg border-t-2 border-t-purple-400">
+                            <strong><i class="fa-solid fa-brain text-purple-400 mr-1"></i>THINKS:</strong> Logika atau pikiran yang terpendam.
+                        </div>
+                        <div class="glass-panel p-3 rounded-lg border-t-2 border-t-green-400">
+                            <strong><i class="fa-solid fa-person-walking text-green-400 mr-1"></i>DOES:</strong> Tindakan fisik riil yang mereka lakukan.
+                        </div>
+                        <div class="glass-panel p-3 rounded-lg border-t-2 border-t-rose-400">
+                            <strong><i class="fa-solid fa-heart-crack text-rose-400 mr-1"></i>FEELS:</strong> Emosi yang mereka rasakan saat itu.
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-ice-bg p-3 border border-ice-blue/10 rounded-lg text-xs">
-                    <span class="text-ice-yellow font-bold">Mekanika Permainan:</span> Baca isi kartu di layar tengah, lalu ketuk/klik salah satu map tujuan di sisi kiri atau kanan untuk menyortirnya secara instan!
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5">
+                    <p class="font-bold text-white text-sm mb-2"><i class="fa-solid fa-gamepad mr-2"></i>CARA BERMAIN:</p>
+                    <ol class="list-decimal list-inside text-sm space-y-1 ml-2 text-slate-400">
+                        <li>Baca instruksi/keluhan Manajer di layar.</li>
+                        <li><strong>Pilih (Tap/Klik)</strong> satu kartu observasi di bagian bawah.</li>
+                        <li><strong>Pilih (Tap/Klik)</strong> kuadran (Says/Thinks/Does/Feels) yang sesuai untuk memindahkannya.</li>
+                        <li>Pastikan semua 4 kartu masuk ke kuadran yang tepat, lalu klik Analisis.</li>
+                    </ol>
                 </div>
             </div>
 
-            <div class="mt-6">
-                <button onclick="startGame()" class="w-full bg-ice-blue hover:bg-cyan-400 text-ice-deep font-black py-3 rounded-lg uppercase text-sm tracking-wider transition-all shadow-neonBlue transform hover:scale-[1.01] active:scale-95">
-                    Buka Berkas Investigasi 🚀
+            <div class="mt-8 flex justify-end pb-4">
+                <button id="btn-start" class="glass-btn text-white font-bold py-3 px-8 rounded-xl shadow-lg bg-gradient-to-r from-neonCyan/20 to-transparent hover:from-neonCyan/40 flex items-center gap-2">
+                    <i class="fa-solid fa-power-off"></i> Mulai Investigasi
                 </button>
             </div>
-        </section>
+        </div>
 
-        <!-- STEP 3: CORE EXECUTION (CATEGORIZATION GAMEPLAY) -->
-        <section id="screen-game" class="hidden w-full max-w-4xl flex flex-col gap-6">
+        <!-- === SCREEN 3: GAMEPLAY === -->
+        <div id="screen-game" class="hidden flex-1 flex-col animate-fade-in relative h-full">
             
-            <!-- Game HUD / Stats -->
-            <div class="bg-ice-panel rounded-xl p-4 flex flex-wrap justify-between items-center gap-4 border border-ice-blue/10 shadow-neuOut">
-                <div class="flex items-center space-x-4">
-                    <div>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">KODENAMA</p>
-                        <p id="hud-name" class="font-bold text-ice-blue text-xs"></p>
+            <!-- Game Header -->
+            <div class="bg-slate-900/80 backdrop-blur-md border-b border-white/10 p-4 flex flex-col gap-3 shrink-0 z-10">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-white/20">
+                            <i class="fa-solid fa-user-tie text-slate-300"></i>
+                        </div>
+                        <div>
+                            <p id="hud-name" class="text-xs font-bold text-white uppercase tracking-wider">Name</p>
+                            <p class="text-[10px] text-neonCyan">Kasus: <span id="hud-level">1/10</span></p>
+                        </div>
                     </div>
-                    <div class="border-l border-ice-gray h-8"></div>
-                    <div>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">KESULITAN</p>
-                        <p id="hud-level" class="font-bold text-ice-pink text-xs"></p>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400">Akurasi Analisis</p>
+                            <p id="hud-score" class="text-lg font-bold text-neonPurple leading-none">0 <span class="text-xs">PTS</span></p>
+                        </div>
+                        <button id="btn-audio" class="w-8 h-8 rounded-full bg-slate-800 border border-white/20 text-slate-400 hover:text-white transition flex items-center justify-center">
+                            <i class="fa-solid fa-volume-high text-xs"></i>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="flex-grow max-w-xs md:max-w-md mx-2">
-                    <div class="flex justify-between text-[10px] text-gray-400 mb-1">
-                        <span>Laporan Teranalisis</span>
-                        <span id="hud-progress-text">0%</span>
-                    </div>
-                    <div class="w-full bg-ice-bg h-2 rounded-full overflow-hidden border border-ice-blue/20">
-                        <div id="hud-progress-bar" class="bg-ice-blue h-full w-0 transition-all duration-300 shadow-neonBlue"></div>
-                    </div>
-                </div>
-
-                <!-- Score Board -->
-                <div class="bg-ice-bg border border-ice-blue/30 px-4 py-1.5 rounded-lg text-center shadow-neuIn">
-                    <p class="text-[9px] text-ice-yellow uppercase font-bold tracking-widest">XP Akurasi</p>
-                    <p id="hud-score" class="text-sm font-black text-white">0 XP</p>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-neonCyan to-neonPurple w-0 transition-all duration-500 rounded-full"></div>
                 </div>
             </div>
 
-            <!-- Neumorphic Categorization Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+            <!-- Scrollable Game Area -->
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-24">
                 
-                <!-- Category Left Trigger Zone (Folder A) -->
-                <button onclick="submitCategorySelection('saying')" class="md:col-span-3 bg-ice-panel hover:bg-ice-bg/50 border border-ice-blue/20 rounded-2xl p-6 flex flex-col justify-center items-center text-center gap-3 transition-all duration-300 group shadow-neuOut hover:shadow-neonBlue active:scale-95">
-                    <span class="text-4xl group-hover:scale-110 transition-transform">🗂️</span>
-                    <div>
-                        <h3 class="text-sm font-black text-ice-blue uppercase tracking-wider">FOLDER A</h3>
-                        <p class="text-[11px] text-gray-400 leading-tight mt-1">Tirai Permukaan<br><span class="text-white">(Saying / Hearing)</span></p>
+                <!-- The Tip of Iceberg (Context) -->
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-l-white flex flex-col md:flex-row gap-4 items-start relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 bg-white/5 rounded-bl-full w-24 h-24 flex items-start justify-end pointer-events-none">
+                        <i class="fa-solid fa-icicles text-3xl text-white/20"></i>
                     </div>
-                    <div class="mt-2 text-[9px] bg-ice-blue/10 border border-ice-blue/30 text-ice-blue px-2 py-1 rounded font-bold uppercase tracking-wider">
-                        Masuk Folder A
+                    <div class="shrink-0 w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center border border-slate-600">
+                        <i class="fa-solid fa-bullhorn text-rose-400"></i>
                     </div>
-                </button>
-
-                <!-- Active Card Container (Center Slot) -->
-                <div id="active-card-container" class="md:col-span-6 bg-ice-panel rounded-2xl p-6 flex flex-col justify-between items-center text-center relative border border-ice-blue/10 shadow-neuIn min-h-[260px]">
-                    <div class="w-full flex justify-between items-center border-b border-ice-gray pb-2 mb-2 text-[9px] text-gray-400 font-mono">
-                        <span id="card-badge-difficulty" class="text-ice-yellow font-bold uppercase">FASE</span>
-                        <span id="card-serial">ID: #00</span>
-                    </div>
-
-                    <!-- Inner Card content -->
-                    <div class="flex-grow flex items-center justify-center px-4">
-                        <p id="active-card-text" class="text-sm md:text-base font-bold leading-relaxed text-white">
-                            Memuat data observasi empati...
+                    <div class="z-10">
+                        <p class="text-xs text-rose-400 font-bold mb-1">LAPORAN MANAJER (SURFACE PROBLEM)</p>
+                        <p id="scenario-context" class="text-sm md:text-base font-semibold text-white leading-relaxed">
+                            "Pelanggan komplain, mereka butuh tombol Beli yang lebih besar!"
                         </p>
                     </div>
+                </div>
 
-                    <!-- Interactive hint at bottom -->
-                    <div class="w-full pt-3 border-t border-ice-gray/40 mt-4 text-[10px] text-gray-400 italic">
-                        Petunjuk: Analisis apakah ini klaim verbal staf (Saying) atau fakta tindakan & emosi konkrit di lapangan (Does/Feels).
+                <!-- Empathy Map Grid -->
+                <div class="grid grid-cols-2 gap-3 md:gap-4 mt-2">
+                    <!-- SAYS -->
+                    <div class="quadrant-slot glass-panel rounded-xl p-3 flex flex-col border-t-2 border-t-blue-400 min-h-[100px]" data-quadrant="says" onclick="handleQuadrantClick('says')">
+                        <div class="flex items-center gap-2 mb-2 text-blue-400 opacity-80">
+                            <i class="fa-regular fa-comment-dots"></i><span class="text-xs font-bold tracking-widest">SAYS</span>
+                        </div>
+                        <div class="slot-content flex-1 flex items-center justify-center text-xs text-slate-500 text-center italic border border-dashed border-slate-600 rounded-lg bg-slate-900/50">
+                            Ketuk untuk memindahkan data
+                        </div>
+                    </div>
+                    <!-- THINKS -->
+                    <div class="quadrant-slot glass-panel rounded-xl p-3 flex flex-col border-t-2 border-t-purple-400 min-h-[100px]" data-quadrant="thinks" onclick="handleQuadrantClick('thinks')">
+                        <div class="flex items-center gap-2 mb-2 text-purple-400 opacity-80">
+                            <i class="fa-solid fa-brain"></i><span class="text-xs font-bold tracking-widest">THINKS</span>
+                        </div>
+                        <div class="slot-content flex-1 flex items-center justify-center text-xs text-slate-500 text-center italic border border-dashed border-slate-600 rounded-lg bg-slate-900/50">
+                            Ketuk untuk memindahkan data
+                        </div>
+                    </div>
+                    <!-- DOES -->
+                    <div class="quadrant-slot glass-panel rounded-xl p-3 flex flex-col border-t-2 border-t-green-400 min-h-[100px]" data-quadrant="does" onclick="handleQuadrantClick('does')">
+                        <div class="flex items-center gap-2 mb-2 text-green-400 opacity-80">
+                            <i class="fa-solid fa-person-walking"></i><span class="text-xs font-bold tracking-widest">DOES</span>
+                        </div>
+                        <div class="slot-content flex-1 flex items-center justify-center text-xs text-slate-500 text-center italic border border-dashed border-slate-600 rounded-lg bg-slate-900/50">
+                            Ketuk untuk memindahkan data
+                        </div>
+                    </div>
+                    <!-- FEELS -->
+                    <div class="quadrant-slot glass-panel rounded-xl p-3 flex flex-col border-t-2 border-t-rose-400 min-h-[100px]" data-quadrant="feels" onclick="handleQuadrantClick('feels')">
+                        <div class="flex items-center gap-2 mb-2 text-rose-400 opacity-80">
+                            <i class="fa-solid fa-heart-crack"></i><span class="text-xs font-bold tracking-widest">FEELS</span>
+                        </div>
+                        <div class="slot-content flex-1 flex items-center justify-center text-xs text-slate-500 text-center italic border border-dashed border-slate-600 rounded-lg bg-slate-900/50">
+                            Ketuk untuk memindahkan data
+                        </div>
                     </div>
                 </div>
 
-                <!-- Category Right Trigger Zone (Folder B) -->
-                <button onclick="submitCategorySelection('does_feels')" class="md:col-span-3 bg-ice-panel hover:bg-ice-bg/50 border border-ice-pink/20 rounded-2xl p-6 flex flex-col justify-center items-center text-center gap-3 transition-all duration-300 group shadow-neuOut hover:shadow-neonPink active:scale-95">
-                    <span class="text-4xl group-hover:scale-110 transition-transform">👁️</span>
-                    <div>
-                        <h3 class="text-sm font-black text-ice-pink uppercase tracking-wider">FOLDER B</h3>
-                        <p class="text-[11px] text-gray-400 leading-tight mt-1">Gunung Es Riil<br><span class="text-white">(Does / Feels)</span></p>
+                <!-- Instruction / Feedback inline -->
+                <div id="game-feedback" class="text-center text-sm font-semibold h-6 text-neonCyan transition-all duration-300">
+                    Pilih data di bawah, lalu pilih kuadran.
+                </div>
+
+                <!-- Data Pool (Cards to place) -->
+                <div class="glass-panel p-3 rounded-xl bg-slate-800/80">
+                    <p class="text-[10px] text-slate-400 mb-2 font-bold uppercase"><i class="fa-solid fa-database mr-1"></i> Data Observasi (Pilih 1)</p>
+                    <div id="data-pool" class="flex flex-col gap-2">
+                        <!-- Cards injected via JS -->
                     </div>
-                    <div class="mt-2 text-[9px] bg-ice-pink/10 border border-ice-pink/30 text-ice-pink px-2 py-1 rounded font-bold uppercase tracking-wider">
-                        Masuk Folder B
-                    </div>
-                </button>
-
-            </div>
-
-            <!-- Investigator Console/Feed -->
-            <div class="bg-ice-panel/60 border border-ice-blue/15 p-3.5 rounded-xl flex items-center gap-3 shadow-neuIn">
-                <span class="text-xl animate-pulse">🤖</span>
-                <p id="investigator-log" class="text-xs text-gray-300 font-mono">Konsol Detektif: Sistem siap menganalisis klasifikasi Anda.</p>
-            </div>
-
-        </section>
-
-        <!-- STEP 4: POST-ACTION DEBRIEF (RESULTS & METRICS) -->
-        <section id="screen-debrief" class="hidden w-full max-w-4xl bg-ice-panel rounded-2xl p-6 md:p-8 shadow-neuOut border border-ice-blue/10">
-            <div class="text-center border-b border-ice-gray pb-4 mb-6">
-                <div class="inline-block px-3 py-1 bg-ice-blue/10 border border-ice-blue text-[10px] font-bold text-ice-blue uppercase tracking-widest rounded-lg mb-2">Evaluasi Selesai</div>
-                <h2 class="text-2xl md:text-3xl font-black text-white">REKAPITULASI LAPORAN DETEKTIF</h2>
-                <p class="text-xs text-gray-400">Analisis akurasi dalam membedakan kebenaran vs ilusi ucapan</p>
-            </div>
-
-            <!-- Score / Badge Grid Matrix -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 bg-ice-bg p-5 rounded-2xl border border-ice-blue/10 items-center text-center shadow-neuIn">
-                <div>
-                    <p class="text-[10px] text-gray-400 uppercase tracking-widest">SKOR AKHIR</p>
-                    <p id="debrief-score" class="text-5xl font-black text-ice-yellow mt-1">0/100</p>
-                    <p id="debrief-correct-ratio" class="text-xs text-gray-400 mt-1">0 dari 10 Sukses</p>
                 </div>
-                <div class="flex flex-col items-center justify-center border-y sm:border-y-0 sm:border-x border-ice-gray py-4 sm:py-0">
-                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1.5">LENCANA INTEGRITAS</p>
-                    <div id="debrief-badge-icon" class="text-5xl mb-1">🏅</div>
-                    <p id="debrief-badge-name" class="text-xs font-black text-ice-blue uppercase tracking-wider"></p>
-                </div>
-                <div class="px-2">
-                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">REKOMENDASI KEPEMIMPINAN</p>
-                    <p id="debrief-reinforcement" class="text-xs text-gray-300 leading-relaxed text-left"></p>
-                </div>
+
             </div>
 
-            <!-- Detailed feedback database -->
-            <div>
-                <h3 class="text-xs font-black text-ice-yellow uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                    <span>📑</span> ANALISIS BUTIR KEPUTUSAN:
-                </h3>
-                <div id="feedback-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                    <!-- Dynamic evaluation blocks inserted here -->
-                </div>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-ice-gray/40 flex flex-col sm:flex-row gap-4 justify-between items-center">
-                <span class="text-[10px] text-gray-500 font-mono">Sistem Verifikasi Kurikulum Empathy Mapping © 2026</span>
-                <button onclick="restartGame()" class="w-full sm:w-auto px-5 py-2.5 border border-ice-blue bg-ice-bg text-ice-blue hover:bg-ice-blue hover:text-ice-deep font-bold uppercase text-xs tracking-widest rounded-lg transition-all shadow-neuOut">
-                    Ulangi Misi 🔄
+            <!-- Footer Action (Absolute fixed at bottom of container) -->
+            <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-slate-900 via-slate-900/90 to-transparent pt-8">
+                <button id="btn-submit-answer" class="w-full glass-btn text-white font-bold py-3 px-6 rounded-xl shadow-lg border-neonCyan/50 hover:border-neonCyan transition-all disabled:opacity-50 flex justify-center items-center gap-2" disabled>
+                    <i class="fa-solid fa-microchip"></i> Proses Analisis
                 </button>
             </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-ice-blue/10 bg-ice-panel/50 py-3 px-4 text-center text-[10px] tracking-wider text-gray-500 font-mono">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-            <p>Education & Training Dept. © 2026</p>
-            <p class="text-ice-blue/40">Modul Simulasi Evaluasi Terintegrasi LMS v2.1</p>
         </div>
-    </footer>
 
-    <!-- INTERACTIVE GAMEPLAY JAVASCRIPT -->
-    <script>
-        // QUESTION DATASET (5 Easy, 5 Hard)
-        const scenarioDatabase = [
-            // Level 1: Mudah (Easy)
-            {
-                id: 's1',
-                text: 'Hasil Pengisian Kuesioner Staf: "Kami sangat senang dengan jam kerja saat ini dan tidak membutuhkan perubahan apa pun."',
-                category: 'saying',
-                level: 'Mudah',
-                feedback: 'Benar! Apa yang tertulis di dalam kuesioner formal adalah data permukaan ("Saying"). Kerap kali, staf memilih jawaban normatif yang dianggap aman di mata pimpinan.'
-            },
-            {
-                id: 's2',
-                text: 'Hasil Observasi Fisik: Tim kasir berulang kali menyeka keringat dan merenggangkan punggung bawah saat melayani pelanggan selama 6 jam tanpa kursi sandaran.',
-                category: 'does_feels',
-                level: 'Mudah',
-                feedback: 'Hebat! Gerakan fisik (menyeka keringat, pegal punggung) menunjukkan realitas fisik ("Does") kelelahan nyata di lapangan, yang berkebalikan dari kata-kata kuesioner mereka.'
-            },
-            {
-                id: 's3',
-                text: 'Pernyataan Staf di Rapat Evaluasi: "Sistem logistik dan alokasi stok baru ini sangat mudah dipahami, tidak ada kendala teknis."',
-                category: 'saying',
-                level: 'Mudah',
-                feedback: 'Tepat! Klaim verbal dalam forum formal adalah "Saying". Mereka enggan mengutarakan kesulitan karena khawatir dicap lambat belajar.'
-            },
-            {
-                id: 's4',
-                text: 'Hasil Observasi Fisik: Staf gudang harus memanjat rak setinggi 3 meter menggunakan kursi plastik bekas yang rapuh karena tangga aluminium rusak.',
-                category: 'does_feels',
-                level: 'Mudah',
-                feedback: 'Sempurna! Tindakan ekstrem menggunakan kursi plastik rapuh adalah fakta fisik ("Does") bahaya keselamatan kerja yang tidak pernah terangkat dalam forum rapat.'
-            },
-            {
-                id: 's5',
-                text: 'Rekomendasi di Kotak Saran: "Tolong tambahkan pendingin ruangan (AC) portabel di ruang istirahat agar kami lebih nyaman bekerja."',
-                category: 'saying',
-                level: 'Mudah',
-                feedback: 'Tepat! Usulan tertulis di kotak saran adalah klaim di permukaan ("Saying") tentang apa yang staf pikirkan sebagai solusi langsung dari rasa penat mereka.'
-            },
-            // Level 2: Sulit (Hard)
-            {
-                id: 's6',
-                text: 'Hasil Observasi Emosional: Anggota tim diam-diam saling melempar pandangan frustrasi dan menghela napas panjang setiap kali software POS kasir eror.',
-                category: 'does_feels',
-                level: 'Sulit',
-                feedback: 'Luar biasa! Gestur mikro emosional (pandangan frustrasi, menghela napas) menunjukkan emosi terdalam ("Feels") yang membuktikan bahwa sistem operasional sedang bermasalah.'
-            },
-            {
-                id: 's7',
-                text: 'Wawancara Formal HRD: "Saya merasa kompensasi uang makan lembur kami selama ini sudah cukup adil dan tidak ada keluhan."',
-                category: 'saying',
-                level: 'Sulit',
-                feedback: 'Sangat baik! Wawancara satu arah dengan HRD rentan menghasilkan bias kepatuhan ("Saying") di mana karyawan enggan mengeluhkan hak dasar demi kenyamanan kontrak kerja.'
-            },
-            {
-                id: 's8',
-                text: 'Hasil Observasi Fisik: Staf administrasi diam-diam menghitung menggunakan kalkulator ponsel pribadi dan mencatat di buku saku karena PC kantor lambat.',
-                category: 'does_feels',
-                level: 'Sulit',
-                feedback: 'Brilian! Tindakan memintas prosedur operasional standar menggunakan gawai pribadi adalah realitas nyata ("Does") kegagalan infrastruktur digital kita.'
-            },
-            {
-                id: 's9',
-                text: 'Pernyataan Kasir: "Kami merasa tidak butuh kursi duduk di area transaksi, berdiri membuat kami tampak sigap di mata pembeli."',
-                category: 'saying',
-                level: 'Sulit',
-                feedback: 'Benar! Ini adalah "Saying". Staf menyuarakan doktrin SOP karena mereka berpikir itu yang ingin didengar oleh manajemen.'
-            },
-            {
-                id: 's10',
-                text: 'Hasil Observasi Emosional: Karyawan seketika cemas, berbicara sangat pelan, dan waspada mengamati pintu masuk setiap kali Manajer Area datang melintas.',
-                category: 'does_feels',
-                level: 'Sulit',
-                feedback: 'Sempurna! Perubahan suasana emosi yang mendadak cemas ("Feels") saat kedatangan manajemen mengindikasikan adanya krisis budaya kepemimpinan di toko.'
-            }
-        ];
+        <!-- === SCREEN 4: DEBRIEF === -->
+        <div id="screen-debrief" class="hidden flex-1 flex-col animate-fade-in p-6 md:p-10 overflow-y-auto text-center items-center justify-center">
+            
+            <div id="badge-container" class="w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,242,254,0.3)] border-4 border-slate-700 mx-auto">
+                <i id="badge-icon" class="fa-solid fa-award text-5xl"></i>
+            </div>
 
-        // GAME STATES
-        let currentScenarios = [];
-        let currentIndex = 0;
-        let scoreXp = 0;
-        let loggedAnswers = [];
-        let userData = { name: '', nik: '' };
+            <h2 class="text-3xl font-bold text-white mb-2">Laporan Evaluasi</h2>
+            <p class="text-slate-400 mb-6">Konsultan: <span id="debrief-name" class="text-neonCyan font-bold"></span></p>
 
-        // WEB AUDIO API SYSTEM (CYBER ARC SYNTH & GENDANG PERC)
-        let audioCtx = null;
-        let isAudioPlaying = false;
-        let bgmIntervalId = null;
-        let bgmStep = 0;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
-
-        // Complex Web Audio Synth for Traditional Gendang ("Tak" & "Tung") and SFX
-        function playSynthesizedSFX(type) {
-            if (!audioCtx) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            const now = audioCtx.currentTime;
-
-            if (type === 'success') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
-                gain.gain.setValueAtTime(0.12, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            } else if (type === 'error') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220.00, now); // A3
-                osc.frequency.setValueAtTime(146.83, now + 0.12); // D3
-                gain.gain.setValueAtTime(0.18, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-                osc.start(now);
-                osc.stop(now + 0.35);
-            } else if (type === 'click') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(750, now);
-                gain.gain.setValueAtTime(0.08, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
-                osc.start(now);
-                osc.stop(now + 0.05);
-            }
-        }
-
-        // Synth function for traditional gendang/percussion beats
-        function playGendangBeat(type) {
-            if (!audioCtx || !isAudioPlaying) return;
-            const now = audioCtx.currentTime;
-
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'tung') {
-                // Low pitched resonant drum center strike
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(80, now + 0.15);
-                gain.gain.setValueAtTime(0.25, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-                osc.start(now);
-                osc.stop(now + 0.2);
-            } else if (type === 'tak') {
-                // High-pitched wood block/rim-like strike
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(450, now);
-                osc.frequency.exponentialRampToValueAtTime(280, now + 0.08);
-                gain.gain.setValueAtTime(0.12, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            }
-        }
-
-        // BGM Sequencer with 5 Instruments, 4 Chord Progression (Am7 - Fmaj7 - Cmaj7 - G)
-        const chords = [
-            [220.00, 261.63, 329.63, 392.00], // Am7
-            [174.61, 220.00, 261.63, 329.63], // Fmaj7
-            [261.63, 329.63, 392.00, 493.88], // Cmaj7
-            [196.00, 246.94, 293.66, 392.00]  // G
-        ];
-        const bassNotes = [110.00, 87.31, 130.81, 98.00];
-
-        function playBGMSequencer() {
-            if (!isAudioPlaying || !audioCtx) return;
-
-            const now = audioCtx.currentTime;
-            const stepDuration = 1.2; 
-            const chordIndex = bgmStep % 4;
-
-            const activeChord = chords[chordIndex];
-            const activeBass = bassNotes[chordIndex];
-
-            // INSTRUMEN 1: Bass Line (Triangle Wave)
-            const bassOsc = audioCtx.createOscillator();
-            const bassGain = audioCtx.createGain();
-            bassOsc.type = 'triangle';
-            bassOsc.frequency.setValueAtTime(activeBass, now);
-            bassGain.gain.setValueAtTime(0.12, now);
-            bassGain.gain.exponentialRampToValueAtTime(0.001, now + stepDuration - 0.05);
-            bassOsc.connect(bassGain);
-            bassGain.connect(audioCtx.destination);
-            bassOsc.start(now);
-            bassOsc.stop(now + stepDuration);
-
-            // INSTRUMEN 2: Warm Pads (Sines)
-            activeChord.forEach(freq => {
-                const padOsc = audioCtx.createOscillator();
-                const padGain = audioCtx.createGain();
-                padOsc.type = 'sine';
-                padOsc.frequency.setValueAtTime(freq, now);
-                padGain.gain.setValueAtTime(0.03, now);
-                padGain.gain.exponentialRampToValueAtTime(0.001, now + stepDuration - 0.1);
-                padOsc.connect(padGain);
-                padGain.connect(audioCtx.destination);
-                padOsc.start(now);
-                padOsc.stop(now + stepDuration);
-            });
-
-            // INSTRUMEN 3: Cyber Arpeggiator (Plucks)
-            const arpSubstep = stepDuration / 4;
-            activeChord.forEach((freq, idx) => {
-                const arpOsc = audioCtx.createOscillator();
-                const arpGain = audioCtx.createGain();
-                arpOsc.type = 'triangle';
-                arpOsc.frequency.setValueAtTime(freq * 2, now + (idx * arpSubstep));
-                arpGain.gain.setValueAtTime(0, now);
-                arpGain.gain.linearRampToValueAtTime(0.02, now + (idx * arpSubstep) + 0.02);
-                arpGain.gain.exponentialRampToValueAtTime(0.001, now + ((idx + 1) * arpSubstep) - 0.02);
-                arpOsc.connect(arpGain);
-                arpGain.connect(audioCtx.destination);
-                arpOsc.start(now + (idx * arpSubstep));
-                arpOsc.stop(now + ((idx + 1) * arpSubstep));
-            });
-
-            // INSTRUMEN 4 & 5: Traditional Gendang Percussion Synth Beating
-            // Bar sequence: Step 0 (Tung), Step 1 (Tak), Step 2 (Tung Tung), Step 3 (Tak)
-            if (bgmStep % 2 === 0) {
-                playGendangBeat('tung');
-            } else {
-                playGendangBeat('tak');
-                setTimeout(() => playGendangBeat('tak'), 300); // Rimshot ghost note
-            }
-
-            bgmStep++;
-        }
-
-        function toggleAudio() {
-            initAudio();
-            const btn = document.getElementById('btn-audio');
-            const icon = document.getElementById('audio-icon');
-
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            if (!isAudioPlaying) {
-                isAudioPlaying = true;
-                icon.innerText = '🔊';
-                btn.classList.add('border-ice-pink', 'text-ice-pink');
-                btn.innerHTML = `<span id="audio-icon">🔊</span> BGM: NYALA`;
+            <div class="glass-panel p-6 rounded-2xl w-full max-w-md mb-8">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
+                    <span class="text-slate-300">Akurasi Identifikasi Kebutuhan</span>
+                    <span id="debrief-score" class="text-3xl font-bold text-neonPurple">0%</span>
+                </div>
                 
-                playBGMSequencer();
-                bgmIntervalId = setInterval(playBGMSequencer, 1200);
+                <div id="debrief-message" class="text-sm text-slate-300 text-left leading-relaxed">
+                    <!-- Feedback message injected here -->
+                </div>
+            </div>
+
+            <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl text-left text-sm text-blue-200 max-w-md mb-8">
+                <p class="font-bold mb-1"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i>Key Takeaway:</p>
+                <p>Untuk mencari "kebutuhan asli", kita tidak boleh hanya percaya pada apa yang diucapkan (Says). Observasi mendalam terhadap perilaku (Does) dan emosi (Feels) adalah kunci solusi hemat biaya yang out-of-the-box.</p>
+            </div>
+
+            <button onclick="location.reload()" class="glass-btn text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> Kembali ke Markas
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- GAME DATA ---
+        const gameScenarios = [
+            { // Level 1 (Easy)
+                context: "MANAJER: 'Pelanggan bilang UI kita jelek, mereka butuh tombol Beli yang lebih besar dan warna merah!'",
+                data: [
+                    { id: "says", text: "\"Saya tidak bisa menemukan cara untuk membeli barang ini.\"" },
+                    { id: "thinks", text: "\"Kenapa proses belanja di sini ribet sekali dibanding toko lain?\"" },
+                    { id: "does", text: "Menggerakkan kursor maju mundur di halaman keranjang belanja mencari tombol lanjut." },
+                    { id: "feels", text: "Frustrasi dan mulai kehilangan minat belanja." }
+                ],
+                insight: "Masalahnya bukan ukuran tombol, tapi tata letak alur checkout yang membingungkan."
+            },
+            { // Level 2 (Easy)
+                context: "MANAJER: 'Aplikasi terlalu lambat! Kita harus beli server baru yang mahal.'",
+                data: [
+                    { id: "says", text: "\"Loadingnya lama banget, ampun deh.\"" },
+                    { id: "thinks", text: "\"Perusahaan ini tidak menghargai waktu pelanggannya.\"" },
+                    { id: "does", text: "Menutup aplikasi setelah menunggu 5 detik di halaman splash screen." },
+                    { id: "feels", text: "Tidak sabar, jengkel." }
+                ],
+                insight: "Bukan server, tapi perbaiki optimasi gambar di halaman depan."
+            },
+            { // Level 3 (Easy)
+                context: "MANAJER: 'Pelanggan minta fitur A, B, C. Tambahkan semuanya agar kita menang kompetisi!'",
+                data: [
+                    { id: "says", text: "\"Alangkah baiknya kalau aplikasi ini bisa export ke 10 format berbeda.\"" },
+                    { id: "thinks", text: "\"Saya hanya butuh laporan bulanan selesai dengan cepat.\"" },
+                    { id: "does", text: "Setiap hari hanya menggunakan 2 fitur dasar dari 20 fitur yang ada." },
+                    { id: "feels", text: "Kewalahan melihat menu yang terlalu banyak." }
+                ],
+                insight: "Feature bloat. Sembunyikan fitur kompleks, permudah akses ke 2 fitur utama."
+            },
+            { // Level 4 (Easy)
+                context: "MANAJER: 'Penjualan turun. Kita harus banting harga, pelanggan bilang kita kemahalan!'",
+                data: [
+                    { id: "says", text: "\"Layanan kalian terlalu mahal untuk kami saat ini.\"" },
+                    { id: "thinks", text: "\"Saya tidak yakin alat ini memberikan dampak nyata pada profit saya.\"" },
+                    { id: "does", text: "Membayar kompetitor yang harganya lebih mahal karena ada garansi teknisi." },
+                    { id: "feels", text: "Kurang percaya diri dan cemas akan ROI." }
+                ],
+                insight: "Masalah bukan harga, tapi nilai yang dikomunikasikan (Value Proposition) dan garansi."
+            },
+            { // Level 5 (Medium)
+                context: "MANAJER: 'Karyawan menolak pakai software baru. Buat jadwal training 2 hari penuh!'",
+                data: [
+                    { id: "says", text: "\"Software ini terlalu canggih, saya orang gaptek.\"" },
+                    { id: "thinks", text: "\"Kalau saya salah pencet, data perusahaan bisa hilang.\"" },
+                    { id: "does", text: "Menempelkan post-it berisi 10 langkah login di pinggir monitor." },
+                    { id: "feels", text: "Takut berbuat salah, merasa tidak kompeten." }
+                ],
+                insight: "Mereka butuh fitur 'Undo' dan panduan in-app yang aman, bukan training panjang."
+            },
+            { // Level 6 (Medium)
+                context: "MANAJER: 'Antrean Customer Service (CS) panjang. Kita harus rekrut 10 agen CS baru.'",
+                data: [
+                    { id: "says", text: "\"Saya sudah nunggu di telepon 20 menit! Pelayanan buruk!\"" },
+                    { id: "thinks", text: "\"Harusnya hal sepele begini bisa saya urus sendiri tanpa telepon.\"" },
+                    { id: "does", text: "Menelepon CS hanya untuk mereset password karena tombol reset tersembunyi." },
+                    { id: "feels", text: "Merasa tidak berdaya dan marah." }
+                ],
+                insight: "Perbaiki UI Self-Service untuk reset password, kurangi volume telepon masuk."
+            },
+            { // Level 7 (Medium)
+                context: "MANAJER: 'Koordinasi tim kacau. Mulai besok kirim email update harian ke seluruh staf!'",
+                data: [
+                    { id: "says", text: "\"Saya sering ketinggalan informasi penting dari pusat.\"" },
+                    { id: "thinks", text: "\"Terlalu banyak notifikasi yang tidak relevan dengan kerjaan saya.\"" },
+                    { id: "does", text: "Langsung menghapus email massal kantor tanpa membacanya." },
+                    { id: "feels", text: "Apatis, overload informasi." }
+                ],
+                insight: "Ganti email massal dengan dashboard personalisasi tiap divisi."
+            },
+            { // Level 8 (Hard)
+                context: "MANAJER: 'Gamifikasi LMS kita gagal! Tambahkan lebih banyak lencana dan animasi kembang api!'",
+                data: [
+                    { id: "says", text: "\"Modul pembelajarannya membosankan.\"" },
+                    { id: "thinks", text: "\"Lencana virtual ini tidak membantu saya naik gaji atau kerja lebih cepat.\"" },
+                    { id: "does", text: "Hanya login ke LMS jika diancam SP oleh HRD, lalu asal klik agar selesai." },
+                    { id: "feels", text: "Merasa diremehkan (patronized) seolah anak kecil." }
+                ],
+                insight: "Gamifikasi harus dikaitkan dengan karir nyata, bukan sekadar badge dekoratif."
+            },
+            { // Level 9 (Hard)
+                context: "MANAJER: 'Ruang meeting selalu penuh! Kita harus sewa lantai baru untuk bangun ruang kaca.'",
+                data: [
+                    { id: "says", text: "\"Kami butuh tempat untuk kolaborasi tim.\"" },
+                    { id: "thinks", text: "\"Open plan office ini terlalu berisik, saya tidak bisa fokus koding.\"" },
+                    { id: "does", text: "Membooking ruang meeting kapasitas 10 orang hanya untuk bekerja sendirian." },
+                    { id: "feels", text: "Terdistraksi, stres, butuh privasi." }
+                ],
+                insight: "Bukan kurang ruang meeting, tapi butuh 'Focus Pod' kecil kedap suara."
+            },
+            { // Level 10 (Boss Level)
+                context: "DIREKTUR: 'Semua kompetitor pakai AI Chatbot! Pasang AI di web kita besok atau kita tertinggal!'",
+                data: [
+                    { id: "says", text: "\"Kita harus terlihat inovatif dan mutakhir.\"" },
+                    { id: "thinks", text: "\"Jika tidak pakai AI, investor akan mengira kita perusahaan kuno.\"" },
+                    { id: "does", text: "Sistem database dasar produk sering error dan agen manusia lambat merespons." },
+                    { id: "feels", text: "FOMO (Fear of Missing Out), cemas akan citra perusahaan." }
+                ],
+                insight: "AI Chatbot yang dibangun di atas database rusak akan menjadi bencana publik. Perbaiki fundamental dulu."
+            }
+        ];
+
+        // --- STATE VARIABLES ---
+        let currentState = {
+            name: "",
+            nik: "",
+            currentLevel: 0,
+            score: 0,
+            audioMuted: false,
+            // Track placed cards: { "says": {id: "thinks", text: "..."}, ... }
+            placed: { says: null, thinks: null, does: null, feels: null },
+            selectedCard: null // Stores the entire object of the clicked card from pool or slot
+        };
+
+        // --- STREAMING_CHUNK:Audio System (Tone.js wrapper)... ---
+        const audioEngine = {
+            bgmLoop: null,
+            synth: null,
+            sfxSuccess: null,
+            sfxFail: null,
+            sfxClick: null,
+            isReady: false,
+
+            init() {
+                if(this.isReady) return;
+                
+                // Master Volume
+                Tone.Destination.volume.value = -10;
+
+                // Simple Chime for Success
+                this.sfxSuccess = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 1 }
+                }).toDestination();
+
+                // Buzzer for Fail
+                this.sfxFail = new Tone.Synth({
+                    oscillator: { type: "sawtooth" },
+                    envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 }
+                }).toDestination();
+
+                // Woodblock for Click/Select
+                this.sfxClick = new Tone.MembraneSynth({
+                    pitchDecay: 0.01,
+                    octaves: 2,
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
+                }).toDestination();
+
+                // Lo-fi Ambient BGM (Very simple generated pattern)
+                const bgmSynth = new Tone.PolySynth(Tone.FMSynth, {
+                    harmonicity: 3, modulationIndex: 10,
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 2, decay: 2, sustain: 1, release: 2 }
+                }).toDestination();
+                bgmSynth.volume.value = -15;
+
+                const chords = [["C4", "E4", "G4", "B4"], ["A3", "C4", "E4", "G4"], ["F3", "A3", "C4", "E4"], ["G3", "B3", "D4", "F4"]];
+                let chordIndex = 0;
+
+                this.bgmLoop = new Tone.Loop(time => {
+                    bgmSynth.triggerAttackRelease(chords[chordIndex], "2m", time);
+                    chordIndex = (chordIndex + 1) % chords.length;
+                }, "2m");
+
+                Tone.Transport.bpm.value = 70;
+                this.isReady = true;
+            },
+
+            playClick() { if(!currentState.audioMuted && this.isReady) this.sfxClick.triggerAttackRelease("C5", "32n"); },
+            playSuccess() { if(!currentState.audioMuted && this.isReady) this.sfxSuccess.triggerAttackRelease(["C5", "E5", "G5"], "8n"); },
+            playFail() { if(!currentState.audioMuted && this.isReady) this.sfxFail.triggerAttackRelease("G2", "8n"); },
+            
+            toggleBGM() {
+                if(!this.isReady) this.init();
+                
+                currentState.audioMuted = !currentState.audioMuted;
+                const btn = document.getElementById('btn-audio');
+                
+                if(currentState.audioMuted) {
+                    Tone.Transport.stop();
+                    btn.innerHTML = '<i class="fa-solid fa-volume-xmark text-xs"></i>';
+                    btn.classList.add('text-red-400');
+                } else {
+                    Tone.start(); // Required by browsers
+                    Tone.Transport.start();
+                    this.bgmLoop.start(0);
+                    btn.innerHTML = '<i class="fa-solid fa-volume-high text-xs"></i>';
+                    btn.classList.remove('text-red-400');
+                }
+            }
+        };
+
+        // --- STREAMING_CHUNK:UI Navigation and DOM Management... ---
+        function switchScreen(screenId) {
+            ['screen-login', 'screen-briefing', 'screen-game', 'screen-debrief'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.remove('flex');
+            });
+            const target = document.getElementById(screenId);
+            target.classList.remove('hidden');
+            target.classList.add('flex');
+        }
+
+        function showFeedback(msg, type = 'info') {
+            const fb = document.getElementById('game-feedback');
+            fb.textContent = msg;
+            if(type === 'error') {
+                fb.className = "text-center text-sm font-bold h-6 text-rose-500 animate-shake";
+            } else if (type === 'success') {
+                fb.className = "text-center text-sm font-bold h-6 text-green-400";
             } else {
-                isAudioPlaying = false;
-                btn.classList.remove('border-ice-pink', 'text-ice-pink');
-                btn.innerHTML = `<span id="audio-icon">🔇</span> BGM: MATI`;
-                clearInterval(bgmIntervalId);
+                fb.className = "text-center text-sm font-semibold h-6 text-neonCyan";
+            }
+            setTimeout(() => { if(fb.textContent === msg) fb.className = "text-center text-sm font-semibold h-6 text-neonCyan transition-all duration-300"; }, 2000);
+        }
+
+        // --- STREAMING_CHUNK:Core Gameplay Logic (Select & Place Mechanic)... ---
+        
+        // Shuffle array utility
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadLevel() {
+            // Reset state for level
+            currentState.placed = { says: null, thinks: null, does: null, feels: null };
+            currentState.selectedCard = null;
+            
+            const scenario = gameScenarios[currentState.currentLevel];
+            
+            // Update HUD
+            document.getElementById('hud-level').textContent = `${currentState.currentLevel + 1}/${gameScenarios.length}`;
+            document.getElementById('scenario-context').textContent = scenario.context;
+            
+            // Update Progress Bar
+            const progressPct = (currentState.currentLevel / gameScenarios.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            // Reset slots
+            document.querySelectorAll('.quadrant-slot').forEach(slot => {
+                slot.classList.remove('border-white', 'bg-white/10');
+                const contentDiv = slot.querySelector('.slot-content');
+                contentDiv.innerHTML = 'Ketuk untuk memindahkan data';
+                contentDiv.className = 'slot-content flex-1 flex items-center justify-center text-[10px] md:text-xs text-slate-500 text-center italic border border-dashed border-slate-600 rounded-lg bg-slate-900/50 p-2 mt-1';
+            });
+
+            // Populate Data Pool
+            const poolContainer = document.getElementById('data-pool');
+            poolContainer.innerHTML = '';
+            
+            const shuffledData = shuffleArray([...scenario.data]);
+            
+            shuffledData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'option-card bg-slate-800 border border-slate-600 p-3 rounded-lg text-xs md:text-sm text-slate-200 hover:bg-slate-700 relative pl-8 shadow-sm';
+                card.innerHTML = `<i class="fa-solid fa-grip-vertical absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i> ${item.text}`;
+                card.dataset.id = item.id;
+                card.dataset.text = item.text;
+                
+                card.onclick = () => handlePoolCardClick(card, item);
+                poolContainer.appendChild(card);
+            });
+
+            document.getElementById('btn-submit-answer').disabled = true;
+            showFeedback("Pilih data observasi, lalu pilih kuadran.");
+        }
+
+        function handlePoolCardClick(cardElement, itemData) {
+            audioEngine.playClick();
+            
+            // Deselect previous
+            document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+            
+            // Toggle selection
+            if (currentState.selectedCard && currentState.selectedCard.originId === itemData.id && currentState.selectedCard.source === 'pool') {
+                currentState.selectedCard = null; // deselect
+                showFeedback("Pilihan dibatalkan.");
+            } else {
+                cardElement.classList.add('selected');
+                currentState.selectedCard = { ...itemData, source: 'pool', element: cardElement };
+                showFeedback("Data dipilih. Sekarang ketuk kuadran (Says/Thinks/Does/Feels).");
+                highlightEmptySlots();
             }
         }
 
-        // SCREEN FLOW CONTROLLERS
-        function processGateway(event) {
-            event.preventDefault();
-            userData.name = document.getElementById('input-nama').value;
-            userData.nik = document.getElementById('input-nik').value;
-
-            document.getElementById('player-display-name').innerText = userData.name;
-            
-            document.getElementById('screen-gateway').classList.add('hidden');
-            document.getElementById('screen-briefing').classList.remove('hidden');
-
-            initAudio();
-            playSynthesizedSFX('success');
+        function highlightEmptySlots() {
+            document.querySelectorAll('.quadrant-slot').forEach(slot => {
+                const quad = slot.dataset.quadrant;
+                if (!currentState.placed[quad]) {
+                    slot.classList.add('highlight');
+                }
+            });
+            setTimeout(() => {
+                document.querySelectorAll('.quadrant-slot').forEach(slot => slot.classList.remove('highlight'));
+            }, 1000);
         }
 
-        function startGame() {
-            document.getElementById('screen-briefing').classList.add('hidden');
-            document.getElementById('screen-game').classList.remove('hidden');
+        function handleQuadrantClick(quadrant) {
+            audioEngine.playClick();
 
-            document.getElementById('hud-name').innerText = userData.name;
+            // Scenario 1: A card is currently selected from the pool or another slot
+            if (currentState.selectedCard) {
+                // If the slot already has a card, move the existing card back to the pool first
+                if (currentState.placed[quadrant]) {
+                    returnCardToPool(currentState.placed[quadrant]);
+                }
 
-            resetGameStates();
-            playSynthesizedSFX('click');
-        }
+                // Place the selected card into this slot
+                placeCardInSlot(currentState.selectedCard, quadrant);
+                
+                // Remove from previous location
+                if (currentState.selectedCard.source === 'pool') {
+                    currentState.selectedCard.element.remove();
+                } else if (currentState.selectedCard.source === 'slot' && currentState.selectedCard.prevQuadrant !== quadrant) {
+                    emptySlot(currentState.selectedCard.prevQuadrant);
+                }
 
-        function resetGameStates() {
-            currentScenarios = [...scenarioDatabase].sort(() => Math.random() - 0.5);
-            currentIndex = 0;
-            scoreXp = 0;
-            loggedAnswers = [];
-
-            updateHUD();
-            displayCard();
-        }
-
-        function updateHUD() {
-            const stepCap = scenarioDatabase.length;
-            const currentItemNumber = currentIndex < stepCap ? currentIndex + 1 : stepCap;
-
-            document.getElementById('hud-progress-text').innerText = `Kartu ${currentItemNumber} / ${stepCap}`;
-            
-            const ratioPercentage = Math.round((currentIndex / stepCap) * 100);
-            document.getElementById('hud-progress-bar').style.width = `${ratioPercentage}%`;
-
-            document.getElementById('hud-score').innerText = `${scoreXp} XP`;
-
-            // Dynamic Level HUD tag
-            const hudLvl = document.getElementById('hud-level');
-            if (currentIndex < 5) {
-                hudLvl.innerText = "Fase: Mudah 🟢";
-                hudLvl.className = "text-xs font-bold text-ice-blue";
-            } else {
-                hudLvl.innerText = "Fase: Sulit 🔥";
-                hudLvl.className = "text-xs font-bold text-ice-pink animate-pulse";
-            }
-        }
-
-        function displayCard() {
-            if (currentIndex >= currentScenarios.length) {
-                renderPostDebrief();
+                currentState.selectedCard = null;
+                checkSubmitReady();
+                showFeedback(`Data dimasukkan ke ${quadrant.toUpperCase()}.`);
                 return;
             }
 
-            const activeCard = currentScenarios[currentIndex];
-            document.getElementById('card-serial').innerText = `ID: #${activeCard.id.toUpperCase()}`;
-            document.getElementById('card-badge-difficulty').innerText = `TINGKAT: ${activeCard.level}`;
-            document.getElementById('active-card-text').innerText = activeCard.text;
+            // Scenario 2: No card selected, but clicking an occupied slot -> Select that card to move it
+            if (!currentState.selectedCard && currentState.placed[quadrant]) {
+                const itemData = currentState.placed[quadrant];
+                
+                // Visually select the slot content
+                document.querySelectorAll('.slot-content').forEach(el => el.classList.remove('ring-2', 'ring-neonCyan'));
+                const slot = document.querySelector(`[data-quadrant="${quadrant}"]`);
+                slot.querySelector('.slot-content').classList.add('ring-2', 'ring-neonCyan');
+
+                currentState.selectedCard = { ...itemData, source: 'slot', prevQuadrant: quadrant };
+                showFeedback("Data di kuadran dipilih. Ketuk kuadran lain untuk memindah, atau...");
+                
+                // Add a "Return to pool" button temporarily? Easier: just tapping it again returns it.
+            } else if (currentState.selectedCard && currentState.selectedCard.source === 'slot' && currentState.selectedCard.prevQuadrant === quadrant) {
+                // Double tap the slot: return to pool
+                returnCardToPool(currentState.placed[quadrant]);
+                emptySlot(quadrant);
+                currentState.selectedCard = null;
+                checkSubmitReady();
+            }
         }
 
-        // SELECTION PROCESSOR
-        function submitCategorySelection(folderChosen) {
-            if (currentIndex >= currentScenarios.length) return;
+        function placeCardInSlot(itemData, quadrant) {
+            currentState.placed[quadrant] = { id: itemData.id, text: itemData.text };
+            
+            const slot = document.querySelector(`[data-quadrant="${quadrant}"]`);
+            const contentDiv = slot.querySelector('.slot-content');
+            
+            contentDiv.innerHTML = `<span class="text-white font-medium leading-tight">${itemData.text}</span>`;
+            contentDiv.className = 'slot-content flex-1 flex items-center justify-center text-[10px] md:text-xs text-center border rounded-lg bg-slate-800/80 p-2 mt-1 shadow-inner border-slate-500 cursor-pointer hover:bg-slate-700 transition';
+            
+            slot.classList.add('animate-fade-in');
+            setTimeout(() => slot.classList.remove('animate-fade-in'), 500);
+        }
 
-            const activeCard = currentScenarios[currentIndex];
-            const isCorrect = activeCard.category === folderChosen;
+        function emptySlot(quadrant) {
+            currentState.placed[quadrant] = null;
+            const slot = document.querySelector(`[data-quadrant="${quadrant}"]`);
+            const contentDiv = slot.querySelector('.slot-content');
+            contentDiv.innerHTML = 'Ketuk untuk memindahkan data';
+            contentDiv.className = 'slot-content flex-1 flex items-center justify-center text-[10px] md:text-xs text-slate-500 text-center italic border border-dashed border-slate-600 rounded-lg bg-slate-900/50 p-2 mt-1';
+        }
 
-            // Log choice record
-            loggedAnswers.push({
-                scenario: activeCard,
-                choice: folderChosen,
-                correct: isCorrect
-            });
+        function returnCardToPool(itemData) {
+            const poolContainer = document.getElementById('data-pool');
+            const card = document.createElement('div');
+            card.className = 'option-card bg-slate-800 border border-slate-600 p-3 rounded-lg text-xs md:text-sm text-slate-200 hover:bg-slate-700 relative pl-8 shadow-sm animate-fade-in';
+            card.innerHTML = `<i class="fa-solid fa-grip-vertical absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i> ${itemData.text}`;
+            card.dataset.id = itemData.id;
+            card.dataset.text = itemData.text;
+            card.onclick = () => handlePoolCardClick(card, itemData);
+            poolContainer.appendChild(card);
+        }
 
-            const consoleText = document.getElementById('investigator-log');
+        function checkSubmitReady() {
+            const isFull = Object.values(currentState.placed).every(val => val !== null);
+            document.getElementById('btn-submit-answer').disabled = !isFull;
+        }
+
+        // --- STREAMING_CHUNK:Validation and Progression... ---
+        document.getElementById('btn-submit-answer').addEventListener('click', () => {
+            const btn = document.getElementById('btn-submit-answer');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menganalisis...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                validateAnswer();
+            }, 800); // Fake processing delay for feel
+        });
+
+        function validateAnswer() {
+            let isCorrect = true;
+            let wrongSlots = [];
+
+            // Check each slot
+            for (const [quadrant, data] of Object.entries(currentState.placed)) {
+                if (data.id !== quadrant) {
+                    isCorrect = false;
+                    wrongSlots.push(quadrant);
+                }
+            }
 
             if (isCorrect) {
-                scoreXp += 100;
-                playSynthesizedSFX('success');
-                consoleText.innerText = `[KONSOL]: Aksesi berhasil! Kasus #${activeCard.id.toUpperCase()} tepat diklasifikasikan.`;
-                consoleText.className = "text-xs font-mono text-ice-blue";
-            } else {
-                playSynthesizedSFX('error');
-                consoleText.innerText = `[KONSOL]: Peringatan! Analisis Kasus #${activeCard.id.toUpperCase()} mendeteksi bias kognitif.`;
-                consoleText.className = "text-xs font-mono text-ice-pink";
-
-                // Visual Feedback effect
-                const container = document.getElementById('active-card-container');
-                container.classList.add('border-ice-pink', 'shadow-neonPink');
+                audioEngine.playSuccess();
+                currentState.score += 10;
+                document.getElementById('hud-score').innerHTML = `${currentState.score} <span class="text-xs">PTS</span>`;
+                
+                showFeedback("Analisis Tepat! Pola kebutuhan asli ditemukan.", "success");
+                
+                // Show insight alert
                 setTimeout(() => {
-                    container.classList.remove('border-ice-pink', 'shadow-neonPink');
-                }, 400);
-            }
+                    alert(`INSIGHT DITEMUKAN:\n\n${gameScenarios[currentState.currentLevel].insight}`);
+                    nextLevel();
+                }, 1000);
 
-            currentIndex++;
-            updateHUD();
-            displayCard();
-        }
-
-        // DEBRIEF GENERATOR
-        function renderPostDebrief() {
-            document.getElementById('screen-game').classList.add('hidden');
-            document.getElementById('screen-debrief').classList.remove('hidden');
-
-            const scorePercent = (scoreXp / (scenarioDatabase.length * 100)) * 100;
-            const rightCount = scoreXp / 100;
-
-            document.getElementById('debrief-score').innerText = `${scorePercent}/100`;
-            document.getElementById('debrief-correct-ratio').innerText = `${rightCount} dari 10 Sukses`;
-
-            // Badge Allocations & Positive Reinforcement messages
-            let badgeIcon = '🥉';
-            let badgeName = 'MANAJER PERMUKAAN';
-            let message = '';
-
-            if (scorePercent === 100) {
-                badgeIcon = '👑';
-                badgeName = 'ICEBERG MASTER';
-                message = `<strong>Kepemimpinan Sempurna!</strong> Anda memiliki kepekaan empati setajam pisau bedah. Anda berhasil membelah ilusi ucapan verbal dari fakta fisik & emosional terdalam kru NEON-MART. Sesi investigasi ini membuktikan Anda adalah pemimpin berorientasi tim yang humanis!`;
-            } else if (scorePercent >= 70) {
-                badgeIcon = '🥈';
-                badgeName = 'EMPATHY OBSERVER';
-                message = `<strong>Kerja Bagus!</strong> Analisis peta empati Anda sudah sangat solid. Anda hanya terkecoh pada beberapa skenario kata-kata formal yang dirancang mengecoh di fase sulit. Terus pertahankan ketajaman observasi Anda!`;
             } else {
-                badgeIcon = '⚠️';
-                badgeName = 'SUPERFICIAL INSPECTOR';
-                message = `<strong>Butuh Latihan Lanjutan!</strong> Anda masih sering terjebak memercayai mentah-mentah ucapan cari aman staf ("Saying") di kuesioner. Biasakan meneliti gerak-gerik, rintangan fisik, dan rasa lelah sesungguhnya ("Does/Feels") dari kru Anda!`;
+                audioEngine.playFail();
+                showFeedback(`Ada ${wrongSlots.length} observasi yang salah penempatan. Coba lagi!`, "error");
+                
+                // Highlight wrong slots
+                wrongSlots.forEach(quad => {
+                    const slot = document.querySelector(`[data-quadrant="${quad}"]`);
+                    slot.classList.add('animate-shake', 'border-rose-500');
+                    setTimeout(() => slot.classList.remove('animate-shake', 'border-rose-500'), 1000);
+                });
+                
+                // Reset button
+                const btn = document.getElementById('btn-submit-answer');
+                btn.innerHTML = '<i class="fa-solid fa-microchip"></i> Proses Ulang Analisis';
+                btn.disabled = false;
+            }
+        }
+
+        function nextLevel() {
+            currentState.currentLevel++;
+            if (currentState.currentLevel >= gameScenarios.length) {
+                showDebrief();
+            } else {
+                loadLevel();
+            }
+        }
+
+        // --- STREAMING_CHUNK:Debrief / Results Screen... ---
+        function showDebrief() {
+            switchScreen('screen-debrief');
+            
+            // Progress Bar to 100%
+            document.getElementById('progress-bar').style.width = `100%`;
+
+            document.getElementById('debrief-name').textContent = currentState.name;
+            
+            const maxScore = gameScenarios.length * 10;
+            const finalPercentage = Math.round((currentState.score / maxScore) * 100);
+            
+            // Animation for score counter
+            let count = 0;
+            const scoreEl = document.getElementById('debrief-score');
+            const interval = setInterval(() => {
+                scoreEl.textContent = `${count}%`;
+                if(count >= finalPercentage) clearInterval(interval);
+                count++;
+            }, 20);
+
+            const msgEl = document.getElementById('debrief-message');
+            const badgeIcon = document.getElementById('badge-icon');
+            const badgeContainer = document.getElementById('badge-container');
+
+            if (finalPercentage === 100) {
+                badgeIcon.className = "fa-solid fa-gem text-5xl text-neonCyan";
+                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(0,242,254,0.6)] border-4 border-neonCyan bg-slate-800 mx-auto animate-float";
+                msgEl.innerHTML = "<strong>Luar Biasa!</strong> Anda memiliki intuisi empati yang sempurna. Anda berhasil memilah antara 'apa yang diucapkan' dengan realitas perilaku pelanggan. Keputusan bisnis perusahaan aman di tangan Anda.";
+            } else if (finalPercentage >= 70) {
+                badgeIcon.className = "fa-solid fa-medal text-5xl text-yellow-400";
+                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(250,204,21,0.4)] border-4 border-yellow-400 bg-slate-800 mx-auto";
+                msgEl.innerHTML = "<strong>Kerja Bagus!</strong> Analisis Anda cukup tajam. Anda sudah mengerti bahwa Puncak Gunung Es seringkali menipu. Terus asah ketelitian Anda dalam membedakan antara tindakan fisik (Does) dan emosi tak terucapkan (Feels).";
+            } else {
+                badgeIcon.className = "fa-solid fa-user-shield text-5xl text-slate-400";
+                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 border-4 border-slate-500 bg-slate-800 mx-auto";
+                msgEl.innerHTML = "<strong>Perlu Peningkatan.</strong> Anda masih sering terjebak oleh keluhan di permukaan (Says) dan menganggapnya sebagai akar masalah. Ingat, inovasi sejati berasal dari mengamati apa yang mereka <em>lakukan</em>, bukan sekadar menuruti apa yang mereka <em>minta</em>.";
             }
 
-            document.getElementById('debrief-badge-icon').innerText = badgeIcon;
-            document.getElementById('debrief-badge-name').innerText = badgeName;
-            document.getElementById('debrief-reinforcement').innerHTML = message;
+            Tone.Transport.stop(); // Stop BGM
+            audioEngine.playSuccess(); // Final victory sound
+        }
 
-            // Generate card feedback blocks
-            const listContainer = document.getElementById('feedback-list');
-            listContainer.innerHTML = '';
+        // --- STREAMING_CHUNK:Initialization and Event Listeners... ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Login Logic
+            document.getElementById('btn-login').addEventListener('click', async () => {
+                const name = document.getElementById('input-name').value.trim();
+                const nik = document.getElementById('input-nik').value.trim();
 
-            loggedAnswers.forEach(ans => {
-                const card = document.createElement('div');
-                card.className = `p-3.5 rounded-xl border text-xs leading-relaxed ${
-                    ans.correct 
-                        ? 'border-ice-blue/30 bg-ice-blue/5' 
-                        : 'border-ice-pink/30 bg-ice-pink/5'
-                }`;
+                if(name === "" || nik === "") {
+                    alert("Nama dan NIK harus diisi untuk registrasi sesi!");
+                    return;
+                }
 
-                const folderText = ans.choice === 'saying' ? 'Folder A (Tirai Permukaan)' : 'Folder B (Gunung Es Riil)';
+                currentState.name = name;
+                currentState.nik = nik;
+                
+                // Initialize audio context on first user interaction
+                await Tone.start();
+                audioEngine.init();
 
-                card.innerHTML = `
-                    <div class="flex justify-between items-center font-mono text-[9px] mb-2">
-                        <span class="${ans.correct ? 'text-ice-blue' : 'text-ice-pink'} font-black">
-                            ${ans.correct ? '✓ KLASIFIKASI AKURAT' : '✗ KEPUTUSAN BIAS'}
-                        </span>
-                        <span>ID: #${ans.scenario.id.toUpperCase()}</span>
-                    </div>
-                    <p class="text-white font-bold mb-2">"${ans.scenario.text}"</p>
-                    <p class="text-gray-400 mb-2">Pilihan Anda: <strong class="${ans.correct ? 'text-ice-blue' : 'text-ice-pink'}">${folderText}</strong></p>
-                    <div class="bg-ice-bg/60 p-2.5 border-l-2 border-ice-yellow rounded-r-lg text-gray-300">
-                        <strong>Kunci Analisis:</strong> ${ans.scenario.feedback}
-                    </div>
-                `;
-                listContainer.appendChild(card);
+                document.getElementById('display-name-brief').textContent = name;
+                document.getElementById('hud-name').textContent = name.substring(0, 10);
+                
+                switchScreen('screen-briefing');
+                audioEngine.playClick();
             });
-        }
 
-        function restartGame() {
-            document.getElementById('screen-debrief').classList.add('hidden');
-            document.getElementById('screen-game').classList.remove('hidden');
+            // Start Game Logic
+            document.getElementById('btn-start').addEventListener('click', () => {
+                audioEngine.playClick();
+                // Play BGM only if not muted
+                if(!currentState.audioMuted) {
+                    Tone.Transport.start();
+                    audioEngine.bgmLoop.start(0);
+                }
+                switchScreen('screen-game');
+                loadLevel();
+            });
 
-            const consoleText = document.getElementById('investigator-log');
-            consoleText.innerText = "Konsol Detektif: Sistem siap menganalisis klasifikasi Anda.";
-            consoleText.className = "text-xs font-mono text-gray-300";
+            // Audio Toggle
+            document.getElementById('btn-audio').addEventListener('click', () => {
+                audioEngine.toggleBGM();
+            });
 
-            resetGameStates();
-            playSynthesizedSFX('click');
-        }
+            // Prevent zooming on mobile inputs
+            document.addEventListener('touchmove', function (event) {
+                if (event.scale !== 1) { event.preventDefault(); }
+            }, { passive: false });
+        });
+
     </script>
 </body>
 </html>
