@@ -94,6 +94,7 @@
         .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
         .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -111,6 +112,11 @@
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
+        }
+
+        @keyframes pop {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         /* Custom Scrollbar for mobile */
@@ -242,20 +248,23 @@
             </div>
 
             <!-- Scrollable Game Area -->
-            <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-24">
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-24 relative">
                 
                 <!-- The Tip of Iceberg (Context) -->
-                <div class="glass-panel p-4 rounded-xl border-l-4 border-l-white flex flex-col md:flex-row gap-4 items-start relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-8 bg-white/5 rounded-bl-full w-24 h-24 flex items-start justify-end pointer-events-none">
-                        <i class="fa-solid fa-icicles text-3xl text-white/20"></i>
+                <div class="glass-panel p-5 md:p-6 rounded-xl border-l-4 border-l-rose-500 bg-gradient-to-r from-rose-900/30 to-slate-900/80 flex flex-col gap-4 relative overflow-hidden shadow-[0_4px_20px_rgba(244,63,94,0.15)] shrink-0">
+                    <div class="absolute top-0 right-0 p-8 bg-white/5 rounded-bl-full w-32 h-32 flex items-start justify-end pointer-events-none">
+                        <i class="fa-solid fa-icicles text-4xl text-rose-200/10"></i>
                     </div>
-                    <div class="shrink-0 w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center border border-slate-600">
-                        <i class="fa-solid fa-bullhorn text-rose-400"></i>
+                    <div class="flex items-center gap-3 border-b border-rose-500/20 pb-3 z-10">
+                        <div class="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
+                            <i class="fa-solid fa-envelope-open-text text-lg"></i>
+                        </div>
+                        <p class="text-xs md:text-sm text-rose-300 font-bold tracking-wider uppercase leading-tight">Pesan Masuk: Laporan Permukaan (Surface Problem)</p>
                     </div>
-                    <div class="z-10">
-                        <p class="text-xs text-rose-400 font-bold mb-1">LAPORAN MANAJER (SURFACE PROBLEM)</p>
-                        <p id="scenario-context" class="text-sm md:text-base font-semibold text-white leading-relaxed">
-                            "Pelanggan komplain, mereka butuh tombol Beli yang lebih besar!"
+                    <div class="relative pl-6 md:pl-8 pr-4 py-3 z-10 bg-black/30 rounded-lg border border-white/5">
+                        <i class="fa-solid fa-quote-left absolute left-2 md:left-3 top-3 text-2xl text-white/10 z-0"></i>
+                        <p id="scenario-context" class="text-sm md:text-base font-medium text-slate-200 leading-relaxed relative z-10 italic whitespace-pre-line">
+                            <!-- Injected by JS -->
                         </p>
                     </div>
                 </div>
@@ -321,19 +330,43 @@
                     <i class="fa-solid fa-microchip"></i> Proses Analisis
                 </button>
             </div>
+            
+            <!-- Level Debrief Modal (Custom Message Box) -->
+            <div id="modal-level-insight" class="hidden absolute inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4">
+                <div class="glass-panel w-full max-w-md p-6 rounded-2xl flex flex-col items-center text-center animate-pop shadow-[0_0_50px_rgba(0,242,254,0.1)] border-neonCyan/30">
+                    <div class="w-16 h-16 rounded-full bg-green-500/20 border border-green-500 flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-check text-3xl text-green-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Kasus Terpecahkan!</h3>
+                    <p class="text-sm text-slate-300 mb-6">Anda berhasil mengungkap kebutuhan asli yang tersembunyi di bawah permukaan.</p>
+                    
+                    <div class="bg-slate-800/80 border-l-4 border-l-neonCyan p-4 rounded-r-xl w-full mb-8 text-left relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i class="fa-solid fa-lightbulb text-6xl text-neonCyan"></i>
+                        </div>
+                        <p class="text-[10px] text-neonCyan font-bold mb-2 tracking-widest uppercase">Takeaway / Insight:</p>
+                        <p id="modal-insight-text" class="text-sm text-white font-medium leading-relaxed relative z-10"></p>
+                    </div>
+                    
+                    <button id="btn-next-level-modal" class="w-full glass-btn text-white font-bold py-3 px-6 rounded-xl bg-gradient-to-r from-neonCyan/20 to-neonPurple/20 hover:from-neonCyan/40 hover:to-neonPurple/40 flex items-center justify-center gap-2">
+                        Lanjut ke Kasus Berikutnya <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
         </div>
 
-        <!-- === SCREEN 4: DEBRIEF === -->
-        <div id="screen-debrief" class="hidden flex-1 flex-col animate-fade-in p-6 md:p-10 overflow-y-auto text-center items-center justify-center">
+        <!-- === SCREEN 4: FINAL DEBRIEF === -->
+        <div id="screen-debrief" class="hidden flex-1 flex-col animate-fade-in p-6 md:p-10 overflow-y-auto text-center items-center justify-center relative">
             
-            <div id="badge-container" class="w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,242,254,0.3)] border-4 border-slate-700 mx-auto">
+            <div id="badge-container" class="w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,242,254,0.3)] border-4 border-slate-700 mx-auto z-10">
                 <i id="badge-icon" class="fa-solid fa-award text-5xl"></i>
             </div>
 
-            <h2 class="text-3xl font-bold text-white mb-2">Laporan Evaluasi</h2>
-            <p class="text-slate-400 mb-6">Konsultan: <span id="debrief-name" class="text-neonCyan font-bold"></span></p>
+            <h2 class="text-3xl font-bold text-white mb-2 z-10">Laporan Evaluasi</h2>
+            <p class="text-slate-400 mb-6 z-10">Konsultan: <span id="debrief-name" class="text-neonCyan font-bold"></span></p>
 
-            <div class="glass-panel p-6 rounded-2xl w-full max-w-md mb-8">
+            <div class="glass-panel p-6 rounded-2xl w-full max-w-md mb-8 z-10">
                 <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
                     <span class="text-slate-300">Akurasi Identifikasi Kebutuhan</span>
                     <span id="debrief-score" class="text-3xl font-bold text-neonPurple">0%</span>
@@ -344,12 +377,12 @@
                 </div>
             </div>
 
-            <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl text-left text-sm text-blue-200 max-w-md mb-8">
-                <p class="font-bold mb-1"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i>Key Takeaway:</p>
-                <p>Untuk mencari "kebutuhan asli", kita tidak boleh hanya percaya pada apa yang diucapkan (Says). Observasi mendalam terhadap perilaku (Does) dan emosi (Feels) adalah kunci solusi hemat biaya yang out-of-the-box.</p>
+            <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl text-left text-sm text-blue-200 max-w-md mb-8 z-10">
+                <p class="font-bold mb-1"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i>Key Takeaway Global:</p>
+                <p>Untuk mencari "kebutuhan asli", kita tidak boleh hanya percaya pada apa yang diucapkan (Says). Observasi mendalam terhadap perilaku (Does) dan emosi (Feels) adalah kunci merancang solusi hebat yang tepat sasaran.</p>
             </div>
 
-            <button onclick="location.reload()" class="glass-btn text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2">
+            <button onclick="location.reload()" class="glass-btn text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 z-10">
                 <i class="fa-solid fa-rotate-right"></i> Kembali ke Markas
             </button>
         </div>
@@ -360,104 +393,104 @@
         // --- GAME DATA ---
         const gameScenarios = [
             { // Level 1 (Easy)
-                context: "MANAJER: 'Pelanggan bilang UI kita jelek, mereka butuh tombol Beli yang lebih besar dan warna merah!'",
+                context: "Subjek: URGENT - UI E-commerce Jelek!\nDari: VP of Sales\n\n\"Tim, kita punya masalah besar. Bulan ini angka keranjang belanja yang ditinggalkan naik drastis. Saya menelepon pelanggan, dan mereka bilang UI kita jelek. Solusinya jelas: Perbesar tombol 'Beli Sekarang' jadi 3x lipat dan ubah warnanya jadi merah neon agar proses belanja lebih mudah! Segera eksekusi!\"",
                 data: [
                     { id: "says", text: "\"Saya tidak bisa menemukan cara untuk membeli barang ini.\"" },
                     { id: "thinks", text: "\"Kenapa proses belanja di sini ribet sekali dibanding toko lain?\"" },
                     { id: "does", text: "Menggerakkan kursor maju mundur di halaman keranjang belanja mencari tombol lanjut." },
                     { id: "feels", text: "Frustrasi dan mulai kehilangan minat belanja." }
                 ],
-                insight: "Masalahnya bukan ukuran tombol, tapi tata letak alur checkout yang membingungkan."
+                insight: "Masalah sebenarnya bukanlah ukuran tombol, melainkan tata letak alur checkout (Customer Journey) yang membingungkan. Perbesar tombol saja tidak akan memperbaiki alur yang berantakan."
             },
             { // Level 2 (Easy)
-                context: "MANAJER: 'Aplikasi terlalu lambat! Kita harus beli server baru yang mahal.'",
+                context: "Subjek: Krisis Rating App!\nDari: Head of IT Operations\n\n\"Rating aplikasi kita di PlayStore anjlok! Komentar terbanyak: Aplikasi terasa lambat sekali saat dibuka. Kesimpulan rapat IT hari ini: Kita harus segera menggelontorkan dana $50,000 untuk migrasi ke server baru yang lebih kuat. Pelanggan benci menunggu, beli server itu sekarang!\"",
                 data: [
                     { id: "says", text: "\"Loadingnya lama banget, ampun deh.\"" },
                     { id: "thinks", text: "\"Perusahaan ini tidak menghargai waktu pelanggannya.\"" },
                     { id: "does", text: "Menutup aplikasi setelah menunggu 5 detik di halaman splash screen." },
                     { id: "feels", text: "Tidak sabar, jengkel." }
                 ],
-                insight: "Bukan server, tapi perbaiki optimasi gambar di halaman depan."
+                insight: "Bukan server yang bermasalah, tapi ukuran gambar dan optimasi di halaman depan (frontend). Solusi murah: kompres gambar, bukan beli server baru."
             },
             { // Level 3 (Easy)
-                context: "MANAJER: 'Pelanggan minta fitur A, B, C. Tambahkan semuanya agar kita menang kompetisi!'",
+                context: "Subjek: Permintaan Fitur Klien VIP\nDari: Product Manager\n\n\"Klien enterprise raksasa kita mengirimkan daftar berisi 15 permintaan fitur baru. Tim sales mendesak agar kita mengabulkan dan membangun semuanya supaya menang dari kompetitor. Suruh tim developer lembur bulan ini untuk merilis semua fitur tersebut!\"",
                 data: [
                     { id: "says", text: "\"Alangkah baiknya kalau aplikasi ini bisa export ke 10 format berbeda.\"" },
                     { id: "thinks", text: "\"Saya hanya butuh laporan bulanan selesai dengan cepat.\"" },
                     { id: "does", text: "Setiap hari hanya menggunakan 2 fitur dasar dari 20 fitur yang ada." },
                     { id: "feels", text: "Kewalahan melihat menu yang terlalu banyak." }
                 ],
-                insight: "Feature bloat. Sembunyikan fitur kompleks, permudah akses ke 2 fitur utama."
+                insight: "Ini disebut Feature Bloat. Jangan tambahkan fitur yang jarang dipakai. Cukup sembunyikan fitur kompleks dan permudah akses ke 2 fitur utama yang benar-benar mereka gunakan."
             },
-            { // Level 4 (Easy)
-                context: "MANAJER: 'Penjualan turun. Kita harus banting harga, pelanggan bilang kita kemahalan!'",
+            { // Level 4 (Medium)
+                context: "Subjek: Strategi Banting Harga\nDari: Chief Financial Officer (CFO)\n\n\"Tingkat pembatalan langganan kita melonjak tajam bulan ini. Banyak pelanggan beralasan harga kita terlalu mahal. Solusi saya: Luncurkan diskon 50% gila-gilaan mulai besok pagi. Kita banting harga saja agar mereka tidak lari ke kompetitor!\"",
                 data: [
                     { id: "says", text: "\"Layanan kalian terlalu mahal untuk kami saat ini.\"" },
                     { id: "thinks", text: "\"Saya tidak yakin alat ini memberikan dampak nyata pada profit saya.\"" },
                     { id: "does", text: "Membayar kompetitor yang harganya lebih mahal karena ada garansi teknisi." },
-                    { id: "feels", text: "Kurang percaya diri dan cemas akan ROI." }
+                    { id: "feels", text: "Kurang percaya diri dan cemas akan Return of Investment (ROI)." }
                 ],
-                insight: "Masalah bukan harga, tapi nilai yang dikomunikasikan (Value Proposition) dan garansi."
+                insight: "Masalahnya bukan soal nominal harga, tapi nilai yang dikomunikasikan (Value Proposition) dan rasa aman (Garansi). Banting harga hanya akan merusak citra."
             },
             { // Level 5 (Medium)
-                context: "MANAJER: 'Karyawan menolak pakai software baru. Buat jadwal training 2 hari penuh!'",
+                context: "Subjek: Penolakan ERP Baru\nDari: HR Director\n\n\"Karyawan senior menolak menggunakan software ERP baru yang mahal ini. Mereka beralasan aplikasinya terlalu rumit. Saya sudah menjadwalkan training intensif selama 3 hari berturut-turut di hotel. Kalau perlu, paksa mereka menghafal buku panduannya!\"",
                 data: [
                     { id: "says", text: "\"Software ini terlalu canggih, saya orang gaptek.\"" },
                     { id: "thinks", text: "\"Kalau saya salah pencet, data perusahaan bisa hilang.\"" },
                     { id: "does", text: "Menempelkan post-it berisi 10 langkah login di pinggir monitor." },
                     { id: "feels", text: "Takut berbuat salah, merasa tidak kompeten." }
                 ],
-                insight: "Mereka butuh fitur 'Undo' dan panduan in-app yang aman, bukan training panjang."
+                insight: "Mereka tidak butuh training panjang yang membosankan. Mereka butuh fitur 'Undo' (batalkan) dan panduan in-app yang memberikan rasa aman saat bereksplorasi."
             },
             { // Level 6 (Medium)
-                context: "MANAJER: 'Antrean Customer Service (CS) panjang. Kita harus rekrut 10 agen CS baru.'",
+                context: "Subjek: Eskalasi Antrean Telepon CS\nDari: Customer Support Lead\n\n\"Antrean telepon ke CS mencapai 30 menit! Pelanggan mulai marah di sosial media. Tidak ada cara lain, manajemen HRD tolong segera buka lowongan untuk merekrut 20 agen Customer Service tambahan minggu depan!\"",
                 data: [
                     { id: "says", text: "\"Saya sudah nunggu di telepon 20 menit! Pelayanan buruk!\"" },
                     { id: "thinks", text: "\"Harusnya hal sepele begini bisa saya urus sendiri tanpa telepon.\"" },
                     { id: "does", text: "Menelepon CS hanya untuk mereset password karena tombol reset tersembunyi." },
                     { id: "feels", text: "Merasa tidak berdaya dan marah." }
                 ],
-                insight: "Perbaiki UI Self-Service untuk reset password, kurangi volume telepon masuk."
+                insight: "Jangan tambah agen CS. Perbaiki UI Self-Service untuk mereset password. Ini akan memangkas drastis volume telepon masuk dan menghemat biaya SDM."
             },
             { // Level 7 (Medium)
-                context: "MANAJER: 'Koordinasi tim kacau. Mulai besok kirim email update harian ke seluruh staf!'",
+                context: "Subjek: Aturan Baru Email Update Harian\nDari: CEO Office\n\n\"Proyek sering tertunda karena miskomunikasi antar divisi. Mulai besok, saya mewajibkan tim Project Management untuk mengirimkan satu email rekap panjang ke seluruh 500 karyawan tanpa terkecuali, setiap pagi. Agar semua orang mendapat info!\"",
                 data: [
                     { id: "says", text: "\"Saya sering ketinggalan informasi penting dari pusat.\"" },
                     { id: "thinks", text: "\"Terlalu banyak notifikasi yang tidak relevan dengan kerjaan saya.\"" },
                     { id: "does", text: "Langsung menghapus email massal kantor tanpa membacanya." },
                     { id: "feels", text: "Apatis, overload informasi." }
                 ],
-                insight: "Ganti email massal dengan dashboard personalisasi tiap divisi."
+                insight: "Email massal hanya akan memicu 'Notification Fatigue'. Ganti dengan dashboard personalisasi di mana tiap divisi hanya melihat info yang relevan untuk mereka."
             },
             { // Level 8 (Hard)
-                context: "MANAJER: 'Gamifikasi LMS kita gagal! Tambahkan lebih banyak lencana dan animasi kembang api!'",
+                context: "Subjek: Kegagalan Portal E-Learning\nDari: L&D Manager\n\n\"Program gamifikasi (poin dan lencana) di portal e-learning ternyata gagal menarik minat staf. Modul kita dianggap membosankan. Vendor mengusulkan untuk menambahkan efek animasi kembang api besar dan 50 lencana virtual baru. Mari kita beli paket tambahan itu!\"",
                 data: [
                     { id: "says", text: "\"Modul pembelajarannya membosankan.\"" },
                     { id: "thinks", text: "\"Lencana virtual ini tidak membantu saya naik gaji atau kerja lebih cepat.\"" },
-                    { id: "does", text: "Hanya login ke LMS jika diancam SP oleh HRD, lalu asal klik agar selesai." },
-                    { id: "feels", text: "Merasa diremehkan (patronized) seolah anak kecil." }
+                    { id: "does", text: "Hanya login ke LMS jika diancam Surat Peringatan oleh HRD, lalu asal klik agar selesai." },
+                    { id: "feels", text: "Merasa diremehkan (patronized) seolah diperlakukan seperti anak kecil." }
                 ],
-                insight: "Gamifikasi harus dikaitkan dengan karir nyata, bukan sekadar badge dekoratif."
+                insight: "Gamifikasi tidak selalu soal poin dan lencana. Gamifikasi di dunia kerja harus dikaitkan dengan progres karir nyata atau pengakuan rekan kerja, bukan sekadar dekorasi."
             },
             { // Level 9 (Hard)
-                context: "MANAJER: 'Ruang meeting selalu penuh! Kita harus sewa lantai baru untuk bangun ruang kaca.'",
+                context: "Subjek: Anggaran Sewa Gedung Baru\nDari: General Affairs\n\n\"Karyawan mengeluh ruang meeting selalu penuh setiap hari, membuat mereka sulit bekerja sama. Saya sudah mengajukan anggaran miliaran untuk menyewa satu lantai tambahan di gedung ini. Kita harus membangun lebih banyak ruang kaca untuk meeting kolaborasi!\"",
                 data: [
                     { id: "says", text: "\"Kami butuh tempat untuk kolaborasi tim.\"" },
                     { id: "thinks", text: "\"Open plan office ini terlalu berisik, saya tidak bisa fokus koding.\"" },
                     { id: "does", text: "Membooking ruang meeting kapasitas 10 orang hanya untuk bekerja sendirian." },
                     { id: "feels", text: "Terdistraksi, stres, butuh privasi." }
                 ],
-                insight: "Bukan kurang ruang meeting, tapi butuh 'Focus Pod' kecil kedap suara."
+                insight: "Bukan kurang ruang meeting kolaborasi, tapi karyawan butuh 'Focus Pod' (bilik kecil) kedap suara untuk bekerja sendirian. Sewa lantai baru adalah pemborosan."
             },
             { // Level 10 (Boss Level)
-                context: "DIREKTUR: 'Semua kompetitor pakai AI Chatbot! Pasang AI di web kita besok atau kita tertinggal!'",
+                context: "Subjek: INTEGRASI AI SEKARANG JUGA!\nDari: Board of Directors\n\n\"Semua kompetitor raksasa kita sudah menggunakan Generative AI! Kita harus segera memasang AI Chatbot canggih di halaman depan website besok juga! Jika tidak, investor akan mengira perusahaan kita kuno dan tidak inovatif!\"",
                 data: [
                     { id: "says", text: "\"Kita harus terlihat inovatif dan mutakhir.\"" },
                     { id: "thinks", text: "\"Jika tidak pakai AI, investor akan mengira kita perusahaan kuno.\"" },
-                    { id: "does", text: "Sistem database dasar produk sering error dan agen manusia lambat merespons." },
+                    { id: "does", text: "Sistem database dasar produk sering error dan agen manusia masih mencatat manual." },
                     { id: "feels", text: "FOMO (Fear of Missing Out), cemas akan citra perusahaan." }
                 ],
-                insight: "AI Chatbot yang dibangun di atas database rusak akan menjadi bencana publik. Perbaiki fundamental dulu."
+                insight: "AI Chatbot yang dibangun di atas operasional dan database yang masih manual/rusak akan menjadi bencana publik. Selesaikan masalah fundamental (Core Engine) sebelum memasang kosmetik AI."
             }
         ];
 
@@ -473,7 +506,7 @@
             selectedCard: null // Stores the entire object of the clicked card from pool or slot
         };
 
-        // --- STREAMING_CHUNK:Audio System (Tone.js wrapper)... ---
+        // --- STREAMING_CHUNK:Setting up Audio System... ---
         const audioEngine = {
             bgmLoop: null,
             synth: null,
@@ -552,7 +585,7 @@
             }
         };
 
-        // --- STREAMING_CHUNK:UI Navigation and DOM Management... ---
+        // --- STREAMING_CHUNK:UI Navigation and State Logic... ---
         function switchScreen(screenId) {
             ['screen-login', 'screen-briefing', 'screen-game', 'screen-debrief'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
@@ -575,10 +608,7 @@
             }
             setTimeout(() => { if(fb.textContent === msg) fb.className = "text-center text-sm font-semibold h-6 text-neonCyan transition-all duration-300"; }, 2000);
         }
-
-        // --- STREAMING_CHUNK:Core Gameplay Logic (Select & Place Mechanic)... ---
         
-        // Shuffle array utility
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -587,6 +617,7 @@
             return array;
         }
 
+        // --- STREAMING_CHUNK:Level Loading and Card Interactions... ---
         function loadLevel() {
             // Reset state for level
             currentState.placed = { says: null, thinks: null, does: null, feels: null };
@@ -602,7 +633,7 @@
             const progressPct = (currentState.currentLevel / gameScenarios.length) * 100;
             document.getElementById('progress-bar').style.width = `${progressPct}%`;
 
-            // Reset slots
+            // Reset slots UI
             document.querySelectorAll('.quadrant-slot').forEach(slot => {
                 slot.classList.remove('border-white', 'bg-white/10');
                 const contentDiv = slot.querySelector('.slot-content');
@@ -627,7 +658,11 @@
                 poolContainer.appendChild(card);
             });
 
-            document.getElementById('btn-submit-answer').disabled = true;
+            // Reset Submission button
+            const submitBtn = document.getElementById('btn-submit-answer');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-microchip"></i> Proses Analisis';
+            
             showFeedback("Pilih data observasi, lalu pilih kuadran.");
         }
 
@@ -661,6 +696,7 @@
             }, 1000);
         }
 
+        // --- STREAMING_CHUNK:Quadrant Placement Logic... ---
         function handleQuadrantClick(quadrant) {
             audioEngine.playClick();
 
@@ -697,9 +733,8 @@
                 slot.querySelector('.slot-content').classList.add('ring-2', 'ring-neonCyan');
 
                 currentState.selectedCard = { ...itemData, source: 'slot', prevQuadrant: quadrant };
-                showFeedback("Data di kuadran dipilih. Ketuk kuadran lain untuk memindah, atau...");
+                showFeedback("Data di kuadran dipilih. Ketuk kuadran lain untuk memindah, atau ketuk lagi untuk kembalikan.");
                 
-                // Add a "Return to pool" button temporarily? Easier: just tapping it again returns it.
             } else if (currentState.selectedCard && currentState.selectedCard.source === 'slot' && currentState.selectedCard.prevQuadrant === quadrant) {
                 // Double tap the slot: return to pool
                 returnCardToPool(currentState.placed[quadrant]);
@@ -746,7 +781,7 @@
             document.getElementById('btn-submit-answer').disabled = !isFull;
         }
 
-        // --- STREAMING_CHUNK:Validation and Progression... ---
+        // --- STREAMING_CHUNK:Validation and Level Debrief Logic... ---
         document.getElementById('btn-submit-answer').addEventListener('click', () => {
             const btn = document.getElementById('btn-submit-answer');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menganalisis...';
@@ -776,10 +811,22 @@
                 
                 showFeedback("Analisis Tepat! Pola kebutuhan asli ditemukan.", "success");
                 
-                // Show insight alert
+                // Show Custom Insight Modal instead of alert()
                 setTimeout(() => {
-                    alert(`INSIGHT DITEMUKAN:\n\n${gameScenarios[currentState.currentLevel].insight}`);
-                    nextLevel();
+                    const modal = document.getElementById('modal-level-insight');
+                    const insightText = document.getElementById('modal-insight-text');
+                    const btnNext = document.getElementById('btn-next-level-modal');
+
+                    insightText.textContent = gameScenarios[currentState.currentLevel].insight;
+
+                    // Change button text if it's the last level
+                    if (currentState.currentLevel === gameScenarios.length - 1) {
+                        btnNext.innerHTML = 'Lihat Laporan Akhir <i class="fa-solid fa-flag-checkered ml-2"></i>';
+                    } else {
+                        btnNext.innerHTML = 'Lanjut ke Kasus Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i>';
+                    }
+
+                    modal.classList.remove('hidden');
                 }, 1000);
 
             } else {
@@ -800,6 +847,13 @@
             }
         }
 
+        // Listener for the custom modal "Next" button
+        document.getElementById('btn-next-level-modal').addEventListener('click', () => {
+            audioEngine.playClick();
+            document.getElementById('modal-level-insight').classList.add('hidden');
+            nextLevel();
+        });
+
         function nextLevel() {
             currentState.currentLevel++;
             if (currentState.currentLevel >= gameScenarios.length) {
@@ -809,7 +863,7 @@
             }
         }
 
-        // --- STREAMING_CHUNK:Debrief / Results Screen... ---
+        // --- STREAMING_CHUNK:Final Evaluation Debrief Screen... ---
         function showDebrief() {
             switchScreen('screen-debrief');
             
@@ -836,15 +890,15 @@
 
             if (finalPercentage === 100) {
                 badgeIcon.className = "fa-solid fa-gem text-5xl text-neonCyan";
-                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(0,242,254,0.6)] border-4 border-neonCyan bg-slate-800 mx-auto animate-float";
+                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(0,242,254,0.6)] border-4 border-neonCyan bg-slate-800 mx-auto animate-float z-10";
                 msgEl.innerHTML = "<strong>Luar Biasa!</strong> Anda memiliki intuisi empati yang sempurna. Anda berhasil memilah antara 'apa yang diucapkan' dengan realitas perilaku pelanggan. Keputusan bisnis perusahaan aman di tangan Anda.";
             } else if (finalPercentage >= 70) {
                 badgeIcon.className = "fa-solid fa-medal text-5xl text-yellow-400";
-                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(250,204,21,0.4)] border-4 border-yellow-400 bg-slate-800 mx-auto";
+                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(250,204,21,0.4)] border-4 border-yellow-400 bg-slate-800 mx-auto z-10";
                 msgEl.innerHTML = "<strong>Kerja Bagus!</strong> Analisis Anda cukup tajam. Anda sudah mengerti bahwa Puncak Gunung Es seringkali menipu. Terus asah ketelitian Anda dalam membedakan antara tindakan fisik (Does) dan emosi tak terucapkan (Feels).";
             } else {
                 badgeIcon.className = "fa-solid fa-user-shield text-5xl text-slate-400";
-                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 border-4 border-slate-500 bg-slate-800 mx-auto";
+                badgeContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mb-6 border-4 border-slate-500 bg-slate-800 mx-auto z-10";
                 msgEl.innerHTML = "<strong>Perlu Peningkatan.</strong> Anda masih sering terjebak oleh keluhan di permukaan (Says) dan menganggapnya sebagai akar masalah. Ingat, inovasi sejati berasal dari mengamati apa yang mereka <em>lakukan</em>, bukan sekadar menuruti apa yang mereka <em>minta</em>.";
             }
 
@@ -852,7 +906,7 @@
             audioEngine.playSuccess(); // Final victory sound
         }
 
-        // --- STREAMING_CHUNK:Initialization and Event Listeners... ---
+        // --- STREAMING_CHUNK:Bootstrapping Event Listeners... ---
         document.addEventListener('DOMContentLoaded', () => {
             
             // Login Logic
@@ -861,7 +915,15 @@
                 const nik = document.getElementById('input-nik').value.trim();
 
                 if(name === "" || nik === "") {
-                    alert("Nama dan NIK harus diisi untuk registrasi sesi!");
+                    // Small toast fallback for empty fields instead of alert
+                    showFeedback("Nama dan NIK harus diisi untuk registrasi sesi!", "error");
+                    // Flash inputs
+                    document.getElementById('input-name').classList.add('animate-shake', 'border-rose-500');
+                    document.getElementById('input-nik').classList.add('animate-shake', 'border-rose-500');
+                    setTimeout(() => {
+                        document.getElementById('input-name').classList.remove('animate-shake', 'border-rose-500');
+                        document.getElementById('input-nik').classList.remove('animate-shake', 'border-rose-500');
+                    }, 500);
                     return;
                 }
 
